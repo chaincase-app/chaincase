@@ -215,7 +215,7 @@ namespace WalletWasabi.Hwi
 			var fullBaseDirectory = Path.GetFullPath(AppContext.BaseDirectory);
 			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 			{
-				if (!fullBaseDirectory.StartsWith('/'))
+				if (!fullBaseDirectory.StartsWith("/"))
 				{
 					fullBaseDirectory.Insert(0, "/");
 				}

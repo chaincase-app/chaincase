@@ -547,7 +547,7 @@ namespace WalletWasabi.Services
 					string minutesString = parts[1];
 					int minuteInt = int.Parse(minutesString);
 					string bannedInputString = parts[2].TrimEnd('.');
-					string[] bannedInputStringParts = bannedInputString.Split(':', StringSplitOptions.RemoveEmptyEntries);
+					string[] bannedInputStringParts = bannedInputString.Split(":", StringSplitOptions.RemoveEmptyEntries);
 					TxoRef coinReference = new TxoRef(new uint256(bannedInputStringParts[1]), uint.Parse(bannedInputStringParts[0]));
 					SmartCoin coin = State.GetSingleOrDefaultFromWaitingList(coinReference);
 					if (coin is null)
@@ -567,7 +567,7 @@ namespace WalletWasabi.Services
 				{
 					string[] parts = ex.Message.Split(new[] { "Provided input is not unspent: " }, StringSplitOptions.RemoveEmptyEntries);
 					string spentInputString = parts[1].TrimEnd('.');
-					string[] bannedInputStringParts = spentInputString.Split(':', StringSplitOptions.RemoveEmptyEntries);
+					string[] bannedInputStringParts = spentInputString.Split(":", StringSplitOptions.RemoveEmptyEntries);
 					TxoRef coinReference = new TxoRef(new uint256(bannedInputStringParts[1]), uint.Parse(bannedInputStringParts[0]));
 					SmartCoin coin = State.GetSingleOrDefaultFromWaitingList(coinReference);
 					if (coin is null)
