@@ -132,7 +132,7 @@ namespace WalletWasabi.Backend.Models
 		public static FilterModel FromStream(Stream stream, Height height)
 		{
 			uint256 blockHash = new uint256(stream.ReadBytes(32));
-			int filterSize = BitConverter.ToInt32(stream.ReadBytes(4));
+			int filterSize = BitConverter.ToInt32(stream.ReadBytes(4), 0);
 			byte[] data = stream.ReadBytes(filterSize);
 			GolombRiceFilter filter = filterSize > 0 ? new GolombRiceFilter(data, 20, 1 << 20) : null;
 
