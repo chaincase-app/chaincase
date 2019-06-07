@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WalletWasabi\WalletWasabi.csproj" />
+    <ProjectReference Include="..\WalletWasabi.Standard\WalletWasabi.Standard.csproj" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
