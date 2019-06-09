@@ -141,7 +141,7 @@ namespace WalletWasabi.Stores
 
 				if (File.Exists(oldIndexFilepath))
 				{
-					string[] allLines = await File.ReadAllLinesAsync(oldIndexFilepath);
+					string[] allLines = await FileAsyncHelpers.ReadAllLinesAsync(oldIndexFilepath);
 					var matureLines = allLines.SkipLast(100);
 					var immatureLines = allLines.TakeLast(100);
 

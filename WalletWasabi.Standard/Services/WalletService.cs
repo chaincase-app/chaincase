@@ -720,7 +720,7 @@ namespace WalletWasabi.Services
 
 					if (hash == new uint256(fileName))
 					{
-						var blockBytes = await File.ReadAllBytesAsync(filePath);
+						var blockBytes = await FileAsyncHelpers.ReadAllBytesAsync(filePath);
 						try
 						{
 							return Block.Load(blockBytes, Synchronizer.Network);
@@ -919,7 +919,7 @@ namespace WalletWasabi.Services
 			using (await BlockFolderLock.LockAsync())
 			{
 				var path = Path.Combine(BlocksFolderPath, hash.ToString());
-				await File.WriteAllBytesAsync(path, block.ToBytes());
+				await FileAsyncHelpers.WriteAllBytesAsync(path, block.ToBytes());
 			}
 
 			return block;

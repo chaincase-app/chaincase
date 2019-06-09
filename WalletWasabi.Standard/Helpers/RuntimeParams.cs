@@ -61,7 +61,7 @@ namespace WalletWasabi.Helpers
 					}
 
 					string jsonString = JsonConvert.SerializeObject(this, Formatting.Indented);
-					await File.WriteAllTextAsync(FilePath,
+					await FileAsyncHelpers.WriteAllTextAsync(FilePath,
 					jsonString,
 					Encoding.UTF8);
 				}
@@ -82,7 +82,7 @@ namespace WalletWasabi.Helpers
 					await file.SaveAsync();
 				}
 
-				string jsonString = await File.ReadAllTextAsync(FilePath, Encoding.UTF8);
+				string jsonString = await FileAsyncHelpers.ReadAllTextAsync(FilePath, Encoding.UTF8);
 				InternalInstance = JsonConvert.DeserializeObject<RuntimeParams>(jsonString);
 				return;
 			}

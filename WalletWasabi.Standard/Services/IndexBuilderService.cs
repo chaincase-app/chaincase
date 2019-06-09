@@ -345,7 +345,7 @@ namespace WalletWasabi.Services
 									Filter = filter
 								};
 
-								await File.AppendAllLinesAsync(IndexFilePath, new[] { filterModel.ToHeightlessLine() });
+								await FileAsyncHelpers.AppendAllLinesAsync(IndexFilePath, new[] { filterModel.ToHeightlessLine() });
 								using (await IndexLock.LockAsync())
 								{
 									Index.Add(filterModel);
@@ -354,7 +354,7 @@ namespace WalletWasabi.Services
 								{
 									File.Delete(Bech32UtxoSetFilePath);
 								}
-								await File.WriteAllLinesAsync(Bech32UtxoSetFilePath, Bech32UtxoSet
+								await FileAsyncHelpers.WriteAllLinesAsync(Bech32UtxoSetFilePath, Bech32UtxoSet
 									.Select(entry => entry.Key.Hash + ":" + entry.Key.N + ":" + ByteHelpers.ToHex(entry.Value.ToCompressedBytes())));
 
 								// If not close to the tip, just log debug.
@@ -417,8 +417,8 @@ namespace WalletWasabi.Services
 			}
 
 			// 2. Serialize Index. (Remove last line.)
-			var lines = await File.ReadAllLinesAsync(IndexFilePath);
-			await File.WriteAllLinesAsync(IndexFilePath, lines.Take(lines.Length - 1).ToArray());
+			var lines = await FileAsyncHelpers.ReadAllLinesAsync(IndexFilePath);
+			await FileAsyncHelpers.WriteAllLinesAsync(IndexFilePath, lines.Take(lines.Length - 1).ToArray());
 
 			// 3. Rollback Bech32UtxoSet
 			if (Bech32UtxoSetHistory.Count != 0)
@@ -427,7 +427,7 @@ namespace WalletWasabi.Services
 				Bech32UtxoSetHistory.RemoveLast();
 
 				// 4. Serialize Bech32UtxoSet.
-				await File.WriteAllLinesAsync(Bech32UtxoSetFilePath, Bech32UtxoSet
+				await FileAsyncHelpers.WriteAllLinesAsync(Bech32UtxoSetFilePath, Bech32UtxoSet
 					.Select(entry => entry.Key.Hash + ":" + entry.Key.N + ":" + ByteHelpers.ToHex(entry.Value.ToCompressedBytes())));
 			}
 		}

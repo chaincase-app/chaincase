@@ -181,7 +181,7 @@ namespace WalletWasabi.Stores
 				ContinueBuildHash(byteArrayBuilder, line);
 			}
 
-			var res = await WorkWithHashAsync(byteArrayBuilder, cancellationToken);
+			var res = await WorkWithHashAsync(byteArrayBuilder);
 			if (res.same)
 			{
 				return;
@@ -189,12 +189,12 @@ namespace WalletWasabi.Stores
 
 			IoHelpers.EnsureContainingDirectoryExists(NewFilePath);
 
-			await File.WriteAllLinesAsync(NewFilePath, lines, cancellationToken);
+			await FileAsyncHelpers.WriteAllLinesAsync(NewFilePath, lines);
 			SafeMoveNewToOriginal();
 			await WriteOutHashAsync(res.hash);
 		}
 
-		private async Task<(bool same, byte[] hash)> WorkWithHashAsync(ByteArrayBuilder byteArrayBuilder, CancellationToken cancellationToken)
+		private async Task<(bool same, byte[] hash)> WorkWithHashAsync(ByteArrayBuilder byteArrayBuilder)
 		{
 			byte[] hash = null;
 			try
@@ -203,7 +203,7 @@ namespace WalletWasabi.Stores
 				hash = HashHelpers.GenerateSha256Hash(bytes);
 				if (File.Exists(DigestFilePath))
 				{
-					var digest = await File.ReadAllBytesAsync(DigestFilePath, cancellationToken);
+					var digest = await FileAsyncHelpers.ReadAllBytesAsync(DigestFilePath);
 					if (ByteHelpers.CompareFastUnsafe(hash, digest))
 					{
 						if (File.Exists(NewFilePath))
@@ -229,7 +229,7 @@ namespace WalletWasabi.Stores
 			{
 				IoHelpers.EnsureContainingDirectoryExists(DigestFilePath);
 
-				await File.WriteAllBytesAsync(DigestFilePath, hash);
+				await FileAsyncHelpers.WriteAllBytesAsync(DigestFilePath, hash);
 			}
 			catch (Exception ex)
 			{
@@ -301,7 +301,7 @@ namespace WalletWasabi.Stores
 				await sw.FlushAsync();
 			}
 
-			var res = await WorkWithHashAsync(byteArrayBuilder, cancellationToken);
+			var res = await WorkWithHashAsync(byteArrayBuilder);
 			if (res.same)
 			{
 				return;
@@ -311,14 +311,14 @@ namespace WalletWasabi.Stores
 			await WriteOutHashAsync(res.hash);
 		}
 
-		public async Task<string[]> ReadAllLinesAsync(CancellationToken cancellationToken = default)
+		public async Task<string[]> ReadAllLinesAsync()
 		{
 			var filePath = OriginalFilePath;
 			if (TryGetSafestFileVersion(out string safestFilePath))
 			{
 				filePath = safestFilePath;
 			}
-			return await File.ReadAllLinesAsync(filePath, cancellationToken);
+			return await FileAsyncHelpers.ReadAllLinesAsync(filePath);
 		}
 
 		public StreamReader OpenText(int bufferSize)
