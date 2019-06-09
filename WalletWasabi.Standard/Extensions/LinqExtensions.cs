@@ -100,5 +100,13 @@ namespace System.Linq
 				++i;
 			}
 		}
+
+		// https://stackoverflow.com/a/3471927
+		public static HashSet<T> ToHashSet<T>(
+			this IEnumerable<T> source,
+			IEqualityComparer<T> comparer = null)
+		{
+			return new HashSet<T>(source, comparer);
+		}
 	}
 }
