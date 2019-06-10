@@ -55,7 +55,7 @@ namespace WalletWasabi.Backend
 					if (File.Exists(Global.Coordinator.CoinJoinsFilePath))
 					{
 						string[] allLines = File.ReadAllLines(Global.Coordinator.CoinJoinsFilePath);
-						Last5CoinJoins = allLines.TakeLast(5).Reverse().ToList();
+						Last5CoinJoins = Enumerable.TakeLast(allLines, 5).Reverse().ToList();
 						UnversionedWebBuilder.UpdateCoinJoinsHtml(Last5CoinJoins);
 					}
 
