@@ -54,26 +54,25 @@ namespace WalletWasabi.Stores
 
 			using (await IndexLock.LockAsync())
 			{
-				using (await MatureIndexFileManager.Mutex.LockAsync())
-				using (await ImmatureIndexFileManager.Mutex.LockAsync())
+				await WaitHandleAsyncFactory.FromWaitHandle(MatureIndexFileManager.WaitHandle);
+				await WaitHandleAsyncFactory.FromWaitHandle(ImmatureIndexFileManager.WaitHandle);
+
+				IoHelpers.EnsureDirectoryExists(WorkFolderPath);
+
+				await TryEnsureBackwardsCompatibilityAsync();
+
+				if (Network == Network.RegTest)
 				{
-					IoHelpers.EnsureDirectoryExists(WorkFolderPath);
-
-					await TryEnsureBackwardsCompatibilityAsync();
-
-					if (Network == Network.RegTest)
-					{
-						MatureIndexFileManager.DeleteMe(); // RegTest is not a global ledger, better to delete it.
-						ImmatureIndexFileManager.DeleteMe();
-					}
-
-					if (!MatureIndexFileManager.Exists())
-					{
-						await MatureIndexFileManager.WriteAllLinesAsync(new[] { StartingFilter.ToHeightlessLine() });
-					}
-
-					await InitializeFiltersAsync();
+					MatureIndexFileManager.DeleteMe(); // RegTest is not a global ledger, better to delete it.
+					ImmatureIndexFileManager.DeleteMe();
 				}
+
+				if (!MatureIndexFileManager.Exists())
+				{
+					await MatureIndexFileManager.WriteAllLinesAsync(new[] { StartingFilter.ToHeightlessLine() });
+				}
+
+				await InitializeFiltersAsync();
 			}
 		}
 
@@ -227,9 +226,8 @@ namespace WalletWasabi.Stores
 				{
 					Interlocked.Exchange(ref _throttleId, 0); // So to notified the currently throttled threads that they don't have to run.
 				}
-
-				using (await MatureIndexFileManager.Mutex.LockAsync(cancel))
-				using (await ImmatureIndexFileManager.Mutex.LockAsync(cancel))
+				await WaitHandleAsyncFactory.FromWaitHandle(MatureIndexFileManager.WaitHandle, cancel);
+				await WaitHandleAsyncFactory.FromWaitHandle(ImmatureIndexFileManager.WaitHandle, cancel);
 				using (await IndexLock.LockAsync(cancel))
 				{
 					// Don't feed the cancellationToken here I always want this to finish running for safety.
@@ -258,7 +256,7 @@ namespace WalletWasabi.Stores
 
 		public async Task ForeachFiltersAsync(Func<FilterModel, Task> todo, Height fromHeight)
 		{
-			using (await MatureIndexFileManager.Mutex.LockAsync())
+			await WaitHandleAsyncFactory.FromWaitHandle(MatureIndexFileManager.WaitHandle);
 			using (await IndexLock.LockAsync())
 			{
 				var firstImmatureHeight = ImmatureFilters.FirstOrDefault()?.BlockHeight;

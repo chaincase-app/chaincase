@@ -28,6 +28,7 @@ namespace WalletWasabi.Stores
 
 		public string FileName { get; }
 		public string FileNameWithoutExtension { get; }
+		public EventWaitHandle WaitHandle { get;  }
 		public AsyncMutex Mutex { get; }
 
 		private const string OldExtension = ".old";
@@ -57,6 +58,8 @@ namespace WalletWasabi.Stores
 			// and both are visible to all processes in the terminal server session.
 			// That is, the prefix names "Global\" and "Local\" describe the scope of the mutex name relative to terminal server sessions, not relative to processes.
 			Mutex = new AsyncMutex($"{FileNameWithoutExtension}-{shortHash}");
+
+			WaitHandle = new EventWaitHandle(true, EventResetMode.AutoReset, $"{FileNameWithoutExtension}-{shortHash}");
 		}
 
 		#region IoOperations
