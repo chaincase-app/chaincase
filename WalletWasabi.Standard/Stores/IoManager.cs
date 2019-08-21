@@ -163,7 +163,7 @@ namespace WalletWasabi.Stores
 			{
 				if (lines is null || !lines.Any())
 				{
-					return;B
+					return;
 				}
 			}
 
