@@ -220,7 +220,7 @@ namespace WalletWasabi.Stores
 			try
 			{
 				IoHelpers.EnsureContainingDirectoryExists(DigestFilePath);
-				await FileAsyncHelpers.WriteAllBytesAsync(DigestFilePath, hash);
+				File.WriteAllBytes(DigestFilePath, hash);
 			}
 			catch (Exception ex)
 			{

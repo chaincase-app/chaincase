@@ -1,5 +1,4 @@
 using NBitcoin;
-using NBitcoin.BitcoinCore;
 using NBitcoin.DataEncoders;
 using NBitcoin.Policy;
 using NBitcoin.Protocol;
@@ -9,7 +8,6 @@ using Nito.AsyncEx;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -919,7 +917,7 @@ namespace WalletWasabi.Services
 			using (await BlockFolderLock.LockAsync())
 			{
 				var path = Path.Combine(BlocksFolderPath, hash.ToString());
-				await FileAsyncHelpers.WriteAllBytesAsync(path, block.ToBytes());
+				File.WriteAllBytes(path, block.ToBytes());
 			}
 
 			return block;
