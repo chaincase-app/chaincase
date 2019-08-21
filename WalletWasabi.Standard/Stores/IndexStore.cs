@@ -52,11 +52,10 @@ namespace WalletWasabi.Stores
 
 			IndexLock = new AsyncLock();
 
+			using (await MatureIndexFileManager.Mutex.LockAsync())
+			using (await ImmatureIndexFileManager.Mutex.LockAsync())
 			using (await IndexLock.LockAsync())
-			{
-				await WaitHandleAsyncFactory.FromWaitHandle(MatureIndexFileManager.WaitHandle);
-				await WaitHandleAsyncFactory.FromWaitHandle(ImmatureIndexFileManager.WaitHandle);
-
+			{ 
 				IoHelpers.EnsureDirectoryExists(WorkFolderPath);
 
 				await TryEnsureBackwardsCompatibilityAsync();
@@ -226,8 +225,9 @@ namespace WalletWasabi.Stores
 				{
 					Interlocked.Exchange(ref _throttleId, 0); // So to notified the currently throttled threads that they don't have to run.
 				}
-				await WaitHandleAsyncFactory.FromWaitHandle(MatureIndexFileManager.WaitHandle, cancel);
-				await WaitHandleAsyncFactory.FromWaitHandle(ImmatureIndexFileManager.WaitHandle, cancel);
+
+				using (await MatureIndexFileManager.Mutex.LockAsync(cancel))
+				using (await ImmatureIndexFileManager.Mutex.LockAsync(cancel))
 				using (await IndexLock.LockAsync(cancel))
 				{
 					// Don't feed the cancellationToken here I always want this to finish running for safety.
@@ -256,7 +256,7 @@ namespace WalletWasabi.Stores
 
 		public async Task ForeachFiltersAsync(Func<FilterModel, Task> todo, Height fromHeight)
 		{
-			await WaitHandleAsyncFactory.FromWaitHandle(MatureIndexFileManager.WaitHandle);
+			using (await MatureIndexFileManager.Mutex.LockAsync())
 			using (await IndexLock.LockAsync())
 			{
 				var firstImmatureHeight = ImmatureFilters.FirstOrDefault()?.BlockHeight;
