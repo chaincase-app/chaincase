@@ -14,8 +14,13 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NBitcoin" Version="4.1.2.35" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="4.5.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
+    <PackageReference Include="NBitcoin" Version="4.1.2.37" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Services\WalletService.cs">
+      <IncludeInPackage>false</IncludeInPackage>
+    </Compile>
   </ItemGroup>
 </Project>
