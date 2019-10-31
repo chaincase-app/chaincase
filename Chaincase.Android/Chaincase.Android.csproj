@@ -103,7 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Chaincase\Chaincase.csproj">
-      <Project>{E5B08CDB-EB96-43F3-8480-590552BAF744}</Project>
+      <Project>{BA57806D-C883-4D04-8A30-1134DDDE23A0}</Project>
       <Name>Chaincase</Name>
     </ProjectReference>
   </ItemGroup>
