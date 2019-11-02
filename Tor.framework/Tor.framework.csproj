@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectTypeGuids>{8FFB629D-F513-41CE-95D2-7ECE97B6EEEC};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <ProjectGuid>{66FCE730-FA8E-47FD-92F9-355DA9480210}</ProjectGuid>
+    <ProjectGuid>{4B9C81E8-049C-425D-BD7A-BFBF586A7F64}</ProjectGuid>
     <TemplateGuid>{b6f3ff35-79b2-4f25-a2fc-60a7cf61013b}</TemplateGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>NativeLibrary</RootNamespace>
@@ -39,9 +39,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tor.linkwith.cs">
-      <DependentUpon>Tor.a</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ObjcBindingApiDefinition Include="ApiDefinition.cs" />
@@ -50,21 +47,9 @@
     <ObjcBindingCoreSource Include="Structs.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ObjcBindingNativeLibrary Include="Tor.a" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Info.plist" />
-    <BundleResource Include="Headers\Tor.h" />
-    <BundleResource Include="Headers\TORLogging.h" />
-    <BundleResource Include="Headers\TORThread.h" />
-    <BundleResource Include="Headers\TORConfiguration.h" />
-    <BundleResource Include="Headers\TORController.h" />
-    <BundleResource Include="Modules\module.modulemap" />
-  </ItemGroup>
-  <ItemGroup>
-    <NativeReference Include="..\..\..\..\Downloads\Carthage\Build\iOS\Tor.framework">
+    <NativeReference Include="..\..\..\Tor.framework2\Tor.framework\Carthage\Build\iOS\Tor.framework">
       <Kind>Framework</Kind>
-      <SmartLink>False</SmartLink>
+      <ForceLoad>True</ForceLoad>
     </NativeReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.ObjCBinding.CSharp.targets" />
