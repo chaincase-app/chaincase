@@ -1,22 +1,30 @@
-using System.IO;
-using System.Threading.Tasks;
-using NBitcoin;
-using WalletWasabi.KeyManagement;
-using Chaincase.Controllers;
-using Xunit;
+﻿
+using System;
+using NUnit.Framework;
 
-namespace Chaincase.Tests
+namespace TorFramework.Tests
 {
-	public class TORControllerTests
+	[TestFixture]
+	public class MyTest
 	{
-	[Fact]
-		public void AssertGeneratedWalletCredentialsVerifyWithPassphrase()
+		[Test]
+		public void Pass()
 		{
-			string passphrase = "passphrase";
-			Mnemonic mnemonic =  WalletController.GenerateMnemonic(passphrase, Network.Main);
+			Assert.True(true);
+		}
 
-			var isVerified =  WalletController.VerifyWalletCredentials(mnemonic.ToString(),  passphrase, Network.Main);
-			Assert.True(isVerified);
+		[Test]
+		public void Fail()
+		{
+			Assert.False(true);
+		}
+
+		[Test]
+		[Ignore("another time")]
+		public void Ignore()
+		{
+			Assert.True(false);
 		}
 	}
 }
+
