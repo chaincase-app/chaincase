@@ -1,12 +1,18 @@
-﻿
-using System;
+﻿using Foundation;
 using NUnit.Framework;
 
 namespace TorFramework.Tests
 {
 	[TestFixture]
-	public class MyTest
+	public class TORControllerTests
 	{
+		[SetUp]
+		public void Init()
+		{
+			//configuration.CookieAuthentication = new NSNumber(true);
+			//configuration.Arguments = new[] { "--ignore-missing-torrc" };
+		}
+
 		[Test]
 		public void Pass()
 		{
@@ -16,6 +22,7 @@ namespace TorFramework.Tests
 		[Test]
 		public void Fail()
 		{
+			TORConfiguration configuration = new TORConfiguration();
 			Assert.False(true);
 		}
 

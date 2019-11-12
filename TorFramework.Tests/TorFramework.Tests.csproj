@@ -115,6 +115,12 @@
     <Compile Include="UnitTestAppDelegate.cs" />
     <Compile Include="TORControllerTests.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TorFramework\TorFramework.csproj">
+      <Project>{4B9C81E8-049C-425D-BD7A-BFBF586A7F64}</Project>
+      <Name>TorFramework</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.3.3.0.912540\build\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.3.3.0.912540\build\Xamarin.Forms.targets')" />
 </Project>
