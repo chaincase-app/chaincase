@@ -1,9 +1,8 @@
 ﻿using System;
 using ObjCRuntime;
 using Foundation;
-using Xamarin.iOS;
 
-namespace Tor.framework
+namespace TorFramework
 {
 	//	Binding Analysis:
 	//  Automated binding is complete, but there are a few APIs which have been flagged with[Verify] attributes.While the entire binding
@@ -43,7 +42,7 @@ namespace Tor.framework
 		[Field("TORControllerErrorDomain", "__Internal")]
 		NSString TORControllerErrorDomain { get; }
 	}
-
+	/*
 	// @interface TORController : NSObject
 	[BaseType(typeof(NSObject))]
 	[DisableDefaultCtor]
@@ -119,7 +118,7 @@ namespace Tor.framework
 		[Export("removeObserver:")]
 		void RemoveObserver([NullAllowed] NSObject observer);
 	}
-
+	*/
 	// @interface TORConfiguration : NSObject
 	[BaseType(typeof(NSObject))]
 	interface TORConfiguration

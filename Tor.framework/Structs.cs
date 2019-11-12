@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Tor.framework
+namespace TorFramework
 {
 
 	//	Binding Analysis:
@@ -19,9 +19,7 @@ namespace Tor.framework
 	//   library name(it defaults to '__Internal') and return/parameter types manually to conform to C calling conventionsfor the target
 	//  platform.You may find you don't even want to expose the C API in your binding, but if you do, you'll probably also want to relocate
 
-	//  the definition to a more appropriate class and expose a stronger type-safe wrapper.For P/Invoke guidance, see http://www.mono-
-
-	//  project.com/docs/advanced/pinvoke/.
+	//  the definition to a more appropriate class and expose a stronger type-safe wrapper.For P/Invoke guidance, see http://www.mono-project.com/docs/advanced/pinvoke/.
 
 
 	//Once you have verified a Verify attribute, you should remove it from the binding source code.The presence of Verify attributes
@@ -32,24 +30,26 @@ namespace Tor.framework
 
 	static class CFunctions
 	{
+		/*
 		// extern void TORInstallEventLogging ();
 		[DllImport("__Internal")]
-		[Verify(PlatformInvoke)]
+		//[Verify(PlatformInvoke)]
 		static extern void TORInstallEventLogging();
 
 		// extern void TORInstallEventLoggingCallback (tor_log_cb _Nonnull cb);
 		[DllImport("__Internal")]
-		[Verify(PlatformInvoke)]
+		//[Verify(PlatformInvoke)]
 		static extern unsafe void TORInstallEventLoggingCallback(tor_log_cb* cb);
 
 		// extern void TORInstallTorLogging ();
 		[DllImport("__Internal")]
-		[Verify(PlatformInvoke)]
+		//[Verify(PlatformInvoke)]
 		static extern void TORInstallTorLogging();
 
 		// extern void TORInstallTorLoggingCallback (tor_log_cb _Nonnull cb);
 		[DllImport("__Internal")]
-		[Verify(PlatformInvoke)]
+		//[Verify(PlatformInvoke)]
 		static extern unsafe void TORInstallTorLoggingCallback(tor_log_cb* cb);
+		*/
 	}
 }

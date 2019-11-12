@@ -47,7 +47,7 @@
     <ObjcBindingCoreSource Include="Structs.cs" />
   </ItemGroup>
   <ItemGroup>
-    <NativeReference Include="..\..\..\Tor.framework2\Tor.framework\Carthage\Build\iOS\Tor.framework">
+    <NativeReference Include="Tor.a">
       <Kind>Framework</Kind>
       <ForceLoad>True</ForceLoad>
     </NativeReference>
