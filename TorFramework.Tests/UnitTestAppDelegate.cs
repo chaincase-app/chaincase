@@ -35,7 +35,7 @@ namespace TorFramework.Tests
 			runner.Add(System.Reflection.Assembly.GetExecutingAssembly());
 
 			window.RootViewController = new UINavigationController(runner.GetViewController());
-			var t = new TorFramework.TORConfiguration();
+
 			// make the window visible
 			window.MakeKeyAndVisible();
 
