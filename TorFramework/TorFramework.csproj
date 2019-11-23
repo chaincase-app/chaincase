@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tor.framework.linkwith.cs" />
   </ItemGroup>
   <ItemGroup>
     <ObjcBindingApiDefinition Include="ApiDefinition.cs" />
@@ -47,10 +48,7 @@
     <ObjcBindingCoreSource Include="Structs.cs" />
   </ItemGroup>
   <ItemGroup>
-    <NativeReference Include="Tor.a">
-      <Kind>Framework</Kind>
-      <ForceLoad>True</ForceLoad>
-    </NativeReference>
+    <ObjcBindingNativeFramework Include="..\Tor.framework" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.ObjCBinding.CSharp.targets" />
 </Project>

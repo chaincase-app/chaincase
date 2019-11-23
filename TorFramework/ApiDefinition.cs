@@ -43,81 +43,81 @@ namespace TorFramework
 		NSString TORControllerErrorDomain { get; }
 	}
 	/*
-	// @interface TORController : NSObject
-	[BaseType(typeof(NSObject))]
-	[DisableDefaultCtor]
-	interface TORController
-	{
-		// @property (readonly, copy, nonatomic) NSOrderedSet<NSString *> * _Nonnull events;
-		[Export("events", ArgumentSemantic.Copy)]
-		NSOrderedSet<NSString> Events { get; }
+		// @interface TORController : NSObject
+		[BaseType(typeof(NSObject))]
+		[DisableDefaultCtor]
+		interface TORController
+		{
+			// @property (readonly, copy, nonatomic) NSOrderedSet<NSString *> * _Nonnull events;
+			[Export("events", ArgumentSemantic.Copy)]
+			NSOrderedSet<NSString> Events { get; }
 
-		// @property (readonly, getter = isConnected, nonatomic) BOOL connected;
-		[Export("connected")]
-		bool Connected { [Bind("isConnected")] get; }
+			// @property (readonly, getter = isConnected, nonatomic) BOOL connected;
+			[Export("connected")]
+			bool Connected { [Bind("isConnected")] get; }
 
-		// -(instancetype _Nonnull)initWithSocketURL:(NSURL * _Nonnull)url __attribute__((objc_designated_initializer));
-		[Export("initWithSocketURL:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(NSUrl url);
+			// -(instancetype _Nonnull)initWithSocketURL:(NSURL * _Nonnull)url __attribute__((objc_designated_initializer));
+			[Export("initWithSocketURL:")]
+			[DesignatedInitializer]
+			IntPtr Constructor(NSUrl url);
 
-		// -(instancetype _Nonnull)initWithSocketHost:(NSString * _Nonnull)host port:(in_port_t)port __attribute__((objc_designated_initializer));
-		[Export("initWithSocketHost:port:")]
-		[DesignatedInitializer]
-		IntPtr Constructor(string host, ushort port);
+			// -(instancetype _Nonnull)initWithSocketHost:(NSString * _Nonnull)host port:(in_port_t)port __attribute__((objc_designated_initializer));
+			[Export("initWithSocketHost:port:")]
+			[DesignatedInitializer]
+			IntPtr Constructor(string host, ushort port);
 
-		// -(BOOL)connect:(NSError * _Nullable * _Nullable)error;
-		[Export("connect:")]
-		bool Connect([NullAllowed] out NSError error);
+			// -(BOOL)connect:(NSError * _Nullable * _Nullable)error;
+			[Export("connect:")]
+			bool Connect([NullAllowed] out NSError error);
 
-		// -(void)disconnect;
-		[Export("disconnect")]
-		void Disconnect();
+			// -(void)disconnect;
+			[Export("disconnect")]
+			void Disconnect();
 
-		// -(void)authenticateWithData:(NSData * _Nonnull)data completion:(void (^ _Nullable)(BOOL, NSError * _Nullable))completion;
-		[Export("authenticateWithData:completion:")]
-		void AuthenticateWithData(NSData data, [NullAllowed] Action<bool, NSError> completion);
+			// -(void)authenticateWithData:(NSData * _Nonnull)data completion:(void (^ _Nullable)(BOOL, NSError * _Nullable))completion;
+			[Export("authenticateWithData:completion:")]
+			void AuthenticateWithData(NSData data, [NullAllowed] Action<bool, NSError> completion);
 
-		// -(void)resetConfForKey:(NSString * _Nonnull)key completion:(void (^ _Nullable)(BOOL, NSError * _Nullable))completion;
-		[Export("resetConfForKey:completion:")]
-		void ResetConfForKey(string key, [NullAllowed] Action<bool, NSError> completion);
+			// -(void)resetConfForKey:(NSString * _Nonnull)key completion:(void (^ _Nullable)(BOOL, NSError * _Nullable))completion;
+			[Export("resetConfForKey:completion:")]
+			void ResetConfForKey(string key, [NullAllowed] Action<bool, NSError> completion);
 
-		// -(void)setConfForKey:(NSString * _Nonnull)key withValue:(NSString * _Nonnull)value completion:(void (^ _Nullable)(BOOL, NSError * _Nullable))completion;
-		[Export("setConfForKey:withValue:completion:")]
-		void SetConfForKey(string key, string value, [NullAllowed] Action<bool, NSError> completion);
+			// -(void)setConfForKey:(NSString * _Nonnull)key withValue:(NSString * _Nonnull)value completion:(void (^ _Nullable)(BOOL, NSError * _Nullable))completion;
+			[Export("setConfForKey:withValue:completion:")]
+			void SetConfForKey(string key, string value, [NullAllowed] Action<bool, NSError> completion);
 
-		// -(void)setConfs:(NSArray<NSDictionary *> * _Nonnull)configs completion:(void (^ _Nullable)(BOOL, NSError * _Nullable))completion;
-		[Export("setConfs:completion:")]
-		void SetConfs(NSDictionary[] configs, [NullAllowed] Action<bool, NSError> completion);
+			// -(void)setConfs:(NSArray<NSDictionary *> * _Nonnull)configs completion:(void (^ _Nullable)(BOOL, NSError * _Nullable))completion;
+			[Export("setConfs:completion:")]
+			void SetConfs(NSDictionary[] configs, [NullAllowed] Action<bool, NSError> completion);
 
-		// -(void)listenForEvents:(NSArray<NSString *> * _Nonnull)events completion:(void (^ _Nullable)(BOOL, NSError * _Nullable))completion;
-		[Export("listenForEvents:completion:")]
-		void ListenForEvents(string[] events, [NullAllowed] Action<bool, NSError> completion);
+			// -(void)listenForEvents:(NSArray<NSString *> * _Nonnull)events completion:(void (^ _Nullable)(BOOL, NSError * _Nullable))completion;
+			[Export("listenForEvents:completion:")]
+			void ListenForEvents(string[] events, [NullAllowed] Action<bool, NSError> completion);
 
-		// -(void)getInfoForKeys:(NSArray<NSString *> * _Nonnull)keys completion:(void (^ _Nonnull)(NSArray<NSString *> * _Nonnull))completion;
-		[Export("getInfoForKeys:completion:")]
-		void GetInfoForKeys(string[] keys, Action<NSArray<NSString>> completion);
+			// -(void)getInfoForKeys:(NSArray<NSString *> * _Nonnull)keys completion:(void (^ _Nonnull)(NSArray<NSString *> * _Nonnull))completion;
+			[Export("getInfoForKeys:completion:")]
+			void GetInfoForKeys(string[] keys, Action<NSArray<NSString>> completion);
 
-		// -(void)getSessionConfiguration:(void (^ _Nonnull)(NSURLSessionConfiguration * _Nullable))completion;
-		[Export("getSessionConfiguration:")]
-		void GetSessionConfiguration(Action<NSUrlSessionConfiguration> completion);
+			// -(void)getSessionConfiguration:(void (^ _Nonnull)(NSURLSessionConfiguration * _Nullable))completion;
+			[Export("getSessionConfiguration:")]
+			void GetSessionConfiguration(Action<NSUrlSessionConfiguration> completion);
 
-		// -(void)sendCommand:(NSString * _Nonnull)command arguments:(NSArray<NSString *> * _Nullable)arguments data:(NSData * _Nullable)data observer:(TORObserverBlock _Nonnull)observer;
-		[Export("sendCommand:arguments:data:observer:")]
-		void SendCommand(string command, [NullAllowed] string[] arguments, [NullAllowed] NSData data, TORObserverBlock observer);
+			// -(void)sendCommand:(NSString * _Nonnull)command arguments:(NSArray<NSString *> * _Nullable)arguments data:(NSData * _Nullable)data observer:(TORObserverBlock _Nonnull)observer;
+			[Export("sendCommand:arguments:data:observer:")]
+			void SendCommand(string command, [NullAllowed] string[] arguments, [NullAllowed] NSData data, TORObserverBlock observer);
 
-		// -(id _Nonnull)addObserverForCircuitEstablished:(void (^ _Nonnull)(BOOL))block;
-		[Export("addObserverForCircuitEstablished:")]
-		NSObject AddObserverForCircuitEstablished(Action<bool> block);
+			// -(id _Nonnull)addObserverForCircuitEstablished:(void (^ _Nonnull)(BOOL))block;
+			[Export("addObserverForCircuitEstablished:")]
+			NSObject AddObserverForCircuitEstablished(Action<bool> block);
 
-		// -(id _Nonnull)addObserverForStatusEvents:(BOOL (^ _Nonnull)(NSString * _Nonnull, NSString * _Nonnull, NSString * _Nonnull, NSDictionary<NSString *,NSString *> * _Nullable))block;
-		[Export("addObserverForStatusEvents:")]
-		NSObject AddObserverForStatusEvents(Func<NSString, NSString, NSString, NSDictionary<NSString, NSString>, bool> block);
+			// -(id _Nonnull)addObserverForStatusEvents:(BOOL (^ _Nonnull)(NSString * _Nonnull, NSString * _Nonnull, NSString * _Nonnull, NSDictionary<NSString *,NSString *> * _Nullable))block;
+			[Export("addObserverForStatusEvents:")]
+			NSObject AddObserverForStatusEvents(Func<NSString, NSString, NSString, NSDictionary<NSString, NSString>, bool> block);
 
-		// -(void)removeObserver:(id _Nullable)observer;
-		[Export("removeObserver:")]
-		void RemoveObserver([NullAllowed] NSObject observer);
-	}
+			// -(void)removeObserver:(id _Nullable)observer;
+			[Export("removeObserver:")]
+			void RemoveObserver([NullAllowed] NSObject observer);
+		}
 	*/
 	// @interface TORConfiguration : NSObject
 	[BaseType(typeof(NSObject))]
