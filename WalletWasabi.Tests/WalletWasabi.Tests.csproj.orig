@@ -24,8 +24,17 @@
   </ItemGroup>
 
   <ItemGroup>
+<<<<<<< HEAD
+    <ProjectReference Include="..\WalletWasabi.Backend\WalletWasabi.Backend.csproj" />
+    <ProjectReference Include="..\WalletWasabi.Gui\WalletWasabi.Gui.csproj" />
+    <ProjectReference Include="..\WalletWasabi\WalletWasabi.csproj" />
+||||||| parent of 5a7641311... build with .NET Standard Extensions
     <ProjectReference Include="..\WalletWasabi.Backend\WalletWasabi.Backend.csproj" />
     <ProjectReference Include="..\WalletWasabi.Standard\WalletWasabi.Standard.csproj" />
+=======
+    <ProjectReference Include="..\WalletWasabi.Standard\WalletWasabi.Standard.csproj" />
+    <ProjectReference Include="..\WalletWasabi.Backend\WalletWasabi.Backend.csproj" />
+>>>>>>> 5a7641311... build with .NET Standard Extensions
   </ItemGroup>
 
   <ItemGroup>
