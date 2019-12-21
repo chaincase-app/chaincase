@@ -24,8 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WalletWasabi.Backend\WalletWasabi.Backend.csproj" />
     <ProjectReference Include="..\WalletWasabi.Standard\WalletWasabi.Standard.csproj" />
+    <ProjectReference Include="..\WalletWasabi.Backend\WalletWasabi.Backend.csproj" />
   </ItemGroup>
 
   <ItemGroup>
