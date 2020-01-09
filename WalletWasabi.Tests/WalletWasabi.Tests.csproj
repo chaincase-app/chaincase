@@ -12,6 +12,12 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <LangVersion>default</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <LangVersion>default</LangVersion>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AltCover" Version="6.5.739" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
@@ -25,7 +31,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WalletWasabi.Standard\WalletWasabi.Standard.csproj" />
-    <ProjectReference Include="..\WalletWasabi.Backend\WalletWasabi.Backend.csproj" />
   </ItemGroup>
 
   <ItemGroup>

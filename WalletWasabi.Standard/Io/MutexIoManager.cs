@@ -9,7 +9,7 @@ namespace WalletWasabi.Io
 {
 	public class MutexIoManager : IoManager
 	{
-		public AsyncMutex Mutex { get; }
+		public AsyncLock Mutex { get; }
 
 		public MutexIoManager(string filePath) : base(filePath)
 		{
@@ -24,7 +24,7 @@ namespace WalletWasabi.Io
 			// Within a terminal server session, two mutexes whose names differ only by their prefixes are separate mutexes,
 			// and both are visible to all processes in the terminal server session.
 			// That is, the prefix names "Global\" and "Local\" describe the scope of the mutex name relative to terminal server sessions, not relative to processes.
-			Mutex = new AsyncMutex($"{FileNameWithoutExtension}-{shortHash}");
+			Mutex = new AsyncLock();
 		}
 	}
 }
