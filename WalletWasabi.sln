@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WalletWasabi.Backend", "Wal
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WalletWasabi.Tests", "WalletWasabi.Tests\WalletWasabi.Tests.csproj", "{50BDFA09-7575-4EEE-B733-D41B65B06D00}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WalletWasabi", "WalletWasabi\WalletWasabi.csproj", "{526AC796-6CC0-4ADA-9A7E-C12267719A1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WalletWasabi.Standard", "WalletWasabi\WalletWasabi.Standard.csproj", "{526AC796-6CC0-4ADA-9A7E-C12267719A1A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6611C6DA-01B6-4C7D-ACD9-F212DD5D66BD}"
 	ProjectSection(SolutionItems) = preProject
@@ -84,7 +84,7 @@ Global
 		{54654468-4F58-4253-84BD-6F53A8D3D2C4}.Debug|x64.ActiveCfg = Release|x64
 		{54654468-4F58-4253-84BD-6F53A8D3D2C4}.Release|Any CPU.ActiveCfg = Release|x64
 		{54654468-4F58-4253-84BD-6F53A8D3D2C4}.Release|x64.ActiveCfg = Release|x64
-		{54654468-4F58-4253-84BD-6F53A8D3D2C4}.Release|x64.Build.0 = Debug|x64
+		{54654468-4F58-4253-84BD-6F53A8D3D2C4}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
