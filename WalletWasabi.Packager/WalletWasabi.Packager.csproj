@@ -24,8 +24,4 @@
     <ErrorReport>none</ErrorReport>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\WalletWasabi\WalletWasabi.csproj" />
-  </ItemGroup>
-
 </Project>
