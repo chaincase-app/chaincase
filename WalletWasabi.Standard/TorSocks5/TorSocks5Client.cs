@@ -25,7 +25,7 @@ namespace WalletWasabi.TorSocks5
 		#region Constructors
 
 		/// <param name="endPoint">Opt out Tor with null.</param>
-		internal TorSocks5Client(EndPoint endPoint)
+		public TorSocks5Client(EndPoint endPoint)
 		{
 			TorSocks5EndPoint = endPoint;
 			TcpClient = endPoint is null ? new TcpClient() : new TcpClient(endPoint.AddressFamily);
@@ -33,7 +33,7 @@ namespace WalletWasabi.TorSocks5
 		}
 
 		/// <param name="tcpClient">Must be already connected.</param>
-		internal TorSocks5Client(TcpClient tcpClient)
+		public TorSocks5Client(TcpClient tcpClient)
 		{
 			Guard.NotNull(nameof(tcpClient), tcpClient);
 			TcpClient = tcpClient;
@@ -81,13 +81,13 @@ namespace WalletWasabi.TorSocks5
 			}
 		}
 
-		internal AsyncLock AsyncLock { get; }
+		public AsyncLock AsyncLock { get; }
 
 		#endregion PropertiesAndMembers
 
 		#region Initializers
 
-		internal async Task ConnectAsync()
+		public async Task ConnectAsync()
 		{
 			if (TorSocks5EndPoint is null)
 			{
@@ -118,7 +118,7 @@ namespace WalletWasabi.TorSocks5
 		/// https://www.torproject.org/docs/tor-manual.html.en
 		/// https://gitweb.torproject.org/torspec.git/tree/socks-extensions.txt#n35
 		/// </summary>
-		internal async Task HandshakeAsync(bool isolateStream = true)
+		public async Task HandshakeAsync(bool isolateStream = true)
 		{
 			await HandshakeAsync(isolateStream ? RandomString.Generate(21) : "").ConfigureAwait(false);
 		}
@@ -129,7 +129,7 @@ namespace WalletWasabi.TorSocks5
 		/// https://gitweb.torproject.org/torspec.git/tree/socks-extensions.txt#n35
 		/// </summary>
 		/// <param name="identity">Isolates streams by identity. If identity is empty string, it won't isolate stream.</param>
-		internal async Task HandshakeAsync(string identity)
+		public async Task HandshakeAsync(string identity)
 		{
 			if (TorSocks5EndPoint is null)
 			{
