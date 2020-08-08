@@ -31,10 +31,10 @@ namespace WalletWasabi.Blockchain.Blocks
 		#region SpecialHeaders
 
 		private static SmartHeader StartingHeaderMain { get; } = new SmartHeader(
-			new uint256("0000000000000000001c8018d9cb3b742ef25114f27563e3fc4a1902167f9893"),
-			new uint256("000000000000000000cbeff0b533f8e1189cf09dfbebf57a8ebe349362811b80"),
-			481824,
-			DateTimeOffset.FromUnixTimeSeconds(1503539857));
+			new uint256("0000000000000000000fe253089b74d682de036b97a05aa777d047013c413969"),
+			new uint256("000000000000000000088dd695cb0747cac74ae6962f74ce1270300e3ec9e896"),
+			634764,
+			DateTimeOffset.FromUnixTimeSeconds(1592168005));
 
 		private static SmartHeader StartingHeaderTestNet { get; } = new SmartHeader(
 			new uint256("00000000000f0d5edcaeba823db17f366be49a80d91d15b77747c2e017b8c20a"),
