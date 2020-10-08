@@ -107,7 +107,7 @@ namespace WalletWasabi.CoinJoin.Client.Clients
 
 		public bool IsDestinationSame => KeyManager.ExtPubKey == DestinationKeyManager.ExtPubKey;
 
-		private async void Synchronizer_ResponseArrivedAsync(object sender, SynchronizeResponse e)
+		public async void Synchronizer_ResponseArrivedAsync(object sender, SynchronizeResponse e)
 		{
 			await TryProcessStatusAsync(e?.CcjRoundStates).ConfigureAwait(false);
 		}
