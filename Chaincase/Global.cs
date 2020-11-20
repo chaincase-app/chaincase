@@ -540,59 +540,57 @@ namespace Chaincase
 
         public async Task OnResuming()
         {
-            if (IsResuming)
+			if (IsResuming)
 			{
-                Logger.LogDebug($"Global.OnResuming(): SleepCts.Cancel()");
-                SleepCts.Cancel();
-                return;
+				Logger.LogDebug($"Global.OnResuming(): SleepCts.Cancel()");
+				SleepCts.Cancel();
+				return;
 			}
 
-            try
+			try
             {
                 Logger.LogDebug($"Global.OnResuming(): Waiting for a lock");
                 ResumeCts.Dispose();
                 ResumeCts = new CancellationTokenSource();
                 using (await LifeCycleMutex.LockAsync(ResumeCts.Token))
                 {
-                    #region CriticalSection
-                    IsResuming = true;
-                    Logger.LogDebug($"Global.OnResuming(): Entered critical section");
+					#region CriticalSection
+					IsResuming = true;
+					Logger.LogDebug($"Global.OnResuming(): Entered critical section");
 
-                    // don't ever cancel Init. use an ephemeral token
-                    await WaitForInitializationCompletedAsync(new CancellationToken());
+					// don't ever cancel Init. use an ephemeral token
+					await WaitForInitializationCompletedAsync(new CancellationToken());
 
-                    var userAgent = Constants.UserAgents.RandomElement();
-                    var connectionParameters = new NodeConnectionParameters { UserAgent = userAgent };
-                    var addrManTask = InitializeAddressManagerBehaviorAsync();
-                    AddressManagerBehavior addressManagerBehavior = await addrManTask.ConfigureAwait(false);
-                    connectionParameters.TemplateBehaviors.Add(addressManagerBehavior);
+					var userAgent = Constants.UserAgents.RandomElement();
+					var connectionParameters = new NodeConnectionParameters { UserAgent = userAgent };
+					var addrManTask = InitializeAddressManagerBehaviorAsync();
+					AddressManagerBehavior addressManagerBehavior = await addrManTask.ConfigureAwait(false);
+					connectionParameters.TemplateBehaviors.Add(addressManagerBehavior);
 
-                    var tor = DependencyService.Get<ITorManager>();
-                    if (tor?.State != TorState.Started && tor.State != TorState.Connected)
-                    {
-                        await tor.StartAsync(false, GetDataDir());
-                    }
+					var tor = DependencyService.Get<ITorManager>();
+					await tor.StartAsync(false, GetDataDir());
 
-                    Nodes.Connect();
-                    Logger.LogInfo("Global.OnResuming():Start connecting to nodes...");
+					Nodes.Connect();
+					Logger.LogInfo("Global.OnResuming():Start connecting to nodes...");
+					//if (tor.State == TorState.Connected)
+					//{   
+					//    var requestInterval = (Network == Network.RegTest) ? TimeSpan.FromSeconds(5) : TimeSpan.FromSeconds(30);
+					//    int maxFiltSyncCount = Network == Network.Main ? 1000 : 10000; // On testnet, filters are empty, so it's faster to query them together
+					//    Synchronizer = new WasabiSynchronizer(Network, BitcoinStore, () => Config.GetCurrentBackendUri(), Config.TorSocks5EndPoint);
+					//    Synchronizer.Start(requestInterval, TimeSpan.FromMinutes(5), maxFiltSyncCount);
+					//    Logger.LogInfo("Global.OnResuming():Start synchronizing filters...");
+					//}
+					//Synchronizer.ResponseArrived += Wallet.ChaumianClient.Synchronizer_ResponseArrivedAsync;
 
-                    var requestInterval = (Network == Network.RegTest) ? TimeSpan.FromSeconds(5) : TimeSpan.FromSeconds(30);
-                    int maxFiltSyncCount = Network == Network.Main ? 1000 : 10000; // On testnet, filters are empty, so it's faster to query them together
-                    Synchronizer = new WasabiSynchronizer(Network, BitcoinStore, () => Config.GetCurrentBackendUri(), Config.TorSocks5EndPoint);
-                    Synchronizer.Start(requestInterval, TimeSpan.FromMinutes(5), maxFiltSyncCount);
-                    Logger.LogInfo("Global.OnResuming():Start synchronizing filters...");
+					//if (SleepingCoins is { })
+					//{
+					//	await Wallet.ChaumianClient.QueueCoinsToMixAsync(SleepingCoins);
+					//	SleepingCoins = null;
+					//}
 
-                    Synchronizer.ResponseArrived += Wallet.ChaumianClient.Synchronizer_ResponseArrivedAsync;
-
-                    if (SleepingCoins is { })
-                    {
-                        await Wallet.ChaumianClient.QueueCoinsToMixAsync(SleepingCoins);
-                        SleepingCoins = null;
-                    }
-
-                    IsResuming = false;
-                    #endregion CriticalSection
-                }
+					IsResuming = false;
+					#endregion CriticalSection
+				}
             }
             catch (OperationCanceledException ex)
             {
@@ -608,81 +606,78 @@ namespace Chaincase
         private protected bool IsGoingToSleep = false;
         public async Task OnSleeping()
         {
-            if (IsGoingToSleep)
-            {
-                Logger.LogDebug($"Global.OnResuming(): ResumeCts.Cancel()");
-                ResumeCts.Cancel();
-                return;
-            }
+			if (IsGoingToSleep)
+			{
+				Logger.LogDebug($"Global.OnResuming(): ResumeCts.Cancel()");
+				ResumeCts.Cancel();
+				return;
+			}
 
-            try
+			try
             {
                 Logger.LogDebug($"Global.OnSleeping(): Waiting for a lock");
                 SleepCts.Dispose();
                 SleepCts = new CancellationTokenSource();
                 using (await LifeCycleMutex.LockAsync(SleepCts.Token))
                 {
-                    #region CriticalSection
-                    Logger.LogDebug($"Global.OnSleeping(): Entered critical section");
+					#region CriticalSection
+					Logger.LogDebug($"Global.OnSleeping(): Entered critical section");
 
-                    IsGoingToSleep = true;
+					IsGoingToSleep = true;
 
-                    // don't ever cancel Init. use an ephemeral token
-                    await WaitForInitializationCompletedAsync(new CancellationToken());
+					// don't ever cancel Init. use an ephemeral token
+					await WaitForInitializationCompletedAsync(new CancellationToken());
 
-                    var tor = DependencyService.Get<ITorManager>();
-                    if (tor?.State != TorState.Stopped) // OnionBrowser && Dispose@Global
-                    {
-                        await tor.StopAsync();
-                        Logger.LogInfo($"Global.OnSleeping():{nameof(tor)} is stopped.");
-                    }
+					var tor = DependencyService.Get<ITorManager>();
+					await tor.StopAsync(Synchronizer);
+					Logger.LogInfo($"Global.OnSleeping():{nameof(tor)} is stopped.");
 
-                    try
-                    {
-                        using var dequeueCts = new CancellationTokenSource(TimeSpan.FromMinutes(6));
-                        await WalletManager.DequeueAllCoinsGracefullyAsync(DequeueReason.ApplicationExit, dequeueCts.Token).ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.LogError($"Error during {nameof(WalletManager.DequeueAllCoinsGracefullyAsync)}: {ex}");
-                    }
+					try
+					{
+						using var dequeueCts = new CancellationTokenSource(TimeSpan.FromMinutes(6));
+						await WalletManager.DequeueAllCoinsGracefullyAsync(DequeueReason.ApplicationExit, dequeueCts.Token).ConfigureAwait(false);
+					}
+					catch (Exception ex)
+					{
+						Logger.LogError($"Error during {nameof(WalletManager.DequeueAllCoinsGracefullyAsync)}: {ex}");
+					}
 
-                    var synchronizer = Synchronizer;
-                    if (synchronizer is { })
+					//var synchronizer = Synchronizer;
+					//if (synchronizer is { })
 
-                    {
-                        await synchronizer.StopAsync();
-                        Logger.LogInfo($"Global.OnSleeping():{nameof(Synchronizer)} is stopped.");
-                    }
+					//{
+					//	await synchronizer.StopAsync();
+					//	Logger.LogInfo($"Global.OnSleeping():{nameof(Synchronizer)} is stopped.");
+					//}
 
-                    var addressManagerFilePath = AddressManagerFilePath;
-                    if (addressManagerFilePath is { })
-                    {
-                        IoHelpers.EnsureContainingDirectoryExists(addressManagerFilePath);
-                        var addressManager = AddressManager;
-                        if (addressManager is { })
-                        {
-                            addressManager.SavePeerFile(AddressManagerFilePath, Config.Network);
-                            Logger.LogInfo($"Global.OnSleeping():{nameof(AddressManager)} is saved to `{AddressManagerFilePath}`.");
-                        }
-                    }
+					var addressManagerFilePath = AddressManagerFilePath;
+					if (addressManagerFilePath is { })
+					{
+						IoHelpers.EnsureContainingDirectoryExists(addressManagerFilePath);
+						var addressManager = AddressManager;
+						if (addressManager is { })
+						{
+							addressManager.SavePeerFile(AddressManagerFilePath, Config.Network);
+							Logger.LogInfo($"Global.OnSleeping():{nameof(AddressManager)} is saved to `{AddressManagerFilePath}`.");
+						}
+					}
 
-                    var nodes = Nodes;
-                    if (nodes is { })
-                    {
-                        nodes.Disconnect();
-                        while (nodes.ConnectedNodes.Any(x => x.IsConnected))
-                        {
-                            await Task.Delay(50);
-                        }
+					var nodes = Nodes;
+					if (nodes is { })
+					{
+						nodes.Disconnect();
+						while (nodes.ConnectedNodes.Any(x => x.IsConnected))
+						{
+							await Task.Delay(50);
+						}
 
-                        Logger.LogInfo($"Global.OnSleeping():{nameof(Nodes)} are disconnected.");
-                    }
+						Logger.LogInfo($"Global.OnSleeping():{nameof(Nodes)} are disconnected.");
+					}
 
-                    IsGoingToSleep = false;
-                    #endregion CriticalSection
-                }
-            }
+					IsGoingToSleep = false;
+					#endregion CriticalSection
+				}
+			}
             catch (Exception ex)
             {
                 Logger.LogWarning($"Global.OnSleeping(): Error while sleeping: {ex}");

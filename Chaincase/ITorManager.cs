@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using WalletWasabi.Services;
 
 namespace Chaincase
 {
@@ -20,7 +21,7 @@ namespace Chaincase
 
         ITorManager Mock();
 
-        Task StopAsync();
+        Task StopAsync(WasabiSynchronizer Synchronizer);
 
         Task StartAsync(bool enrureRunning, string dataDir);
     }
