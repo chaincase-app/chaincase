@@ -22,6 +22,8 @@ namespace WalletWasabi.CoinJoin.Common.Models
 
 		public int RegisteredPeerCount { get; set; }
 
+		public int UnconfirmedPeerCount { get; set; }
+
 		public int RequiredPeerCount { get; set; }
 
 		public int MaximumInputCountPerPeer { get; set; }

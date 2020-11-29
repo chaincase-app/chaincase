@@ -120,6 +120,7 @@ namespace WalletWasabi.CoinJoin.Coordinator.Rounds
 
 		private List<Alice> Alices { get; }
 		private List<Bob> Bobs { get; } // Do not make it a hashset or do not make Bob IEquitable!!!
+		private int UnconfirmedPeersAmount { get; set; }
 
 		private List<UnblindedSignature> RegisteredUnblindedSignatures { get; }
 		private object RegisteredUnblindedSignaturesLock { get; }
@@ -940,6 +941,18 @@ namespace WalletWasabi.CoinJoin.Coordinator.Rounds
 			return Alices.Count;
 		}
 
+		public int CountUnconfirmedPeers(bool syncLock = true)
+		{
+			if (syncLock)
+			{
+				using (RoundSynchronizerLock.Lock())
+				{
+					return UnconfirmedPeersAmount;
+				}
+			}
+			return UnconfirmedPeersAmount;
+		}
+
 		public bool AllAlices(AliceState state)
 		{
 			using (RoundSynchronizerLock.Lock())
@@ -1344,6 +1357,7 @@ namespace WalletWasabi.CoinJoin.Coordinator.Rounds
 				foreach (var id in ids)
 				{
 					numberOfRemovedAlices = Alices.RemoveAll(x => x.UniqueId == id);
+					UnconfirmedPeersAmount += numberOfRemovedAlices;
 				}
 			}
 

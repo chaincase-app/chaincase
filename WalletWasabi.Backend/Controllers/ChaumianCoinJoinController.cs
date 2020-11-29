@@ -85,7 +85,8 @@ namespace WalletWasabi.Backend.Controllers
 					FeePerOutputs = round.FeePerOutputs,
 					CoordinatorFeePercent = round.CoordinatorFeePercent,
 					RoundId = round.RoundId,
-					SuccessfulRoundCount = Coordinator.GetCoinJoinCount() // This is round independent, it is only here because of backward compatibility.
+					SuccessfulRoundCount = Coordinator.GetCoinJoinCount(), // This is round independent, it is only here because of backward compatibility.
+					UnconfirmedPeerCount = round.CountUnconfirmedPeers(syncLock: false)
 				};
 
 				response.Add(state);
@@ -480,7 +481,7 @@ namespace WalletWasabi.Backend.Controllers
 				default:
 					{
 						return Gone($"Participation can be only unconfirmed from InputRegistration phase. Current phase: {phase}.");
-					}
+					}			
 			}
 		}
 
