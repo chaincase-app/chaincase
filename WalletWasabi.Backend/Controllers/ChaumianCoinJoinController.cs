@@ -79,6 +79,7 @@ namespace WalletWasabi.Backend.Controllers
 					InputRegistrationTimesout = round.InputRegistrationTimesout,
 					RegisteredPeerCount = round.CountAlices(syncLock: false),
 					RequiredPeerCount = round.AnonymitySet,
+					QueuedPeers = round.CountQueuedAlices(syncLock: false),
 					MaximumInputCountPerPeer = 7, // Constant for now. If we want to do something with it later, we'll put it to the config file.
 					RegistrationTimeout = (int)round.AliceRegistrationTimeout.TotalSeconds,
 					FeePerInputs = round.FeePerInputs,
@@ -86,7 +87,6 @@ namespace WalletWasabi.Backend.Controllers
 					CoordinatorFeePercent = round.CoordinatorFeePercent,
 					RoundId = round.RoundId,
 					SuccessfulRoundCount = Coordinator.GetCoinJoinCount(), // This is round independent, it is only here because of backward compatibility.
-					UnconfirmedPeerCount = round.CountUnconfirmedPeers(syncLock: false)
 				};
 
 				response.Add(state);
@@ -308,9 +308,11 @@ namespace WalletWasabi.Backend.Controllers
 					foreach (Guid aliceToRemove in alicesToRemove)
 					{
 						round.RemoveAlicesBy(aliceToRemove);
+						// Remove any refrences of Alice if they are in queued list
+						round.DequeueAlices(aliceToRemove);
 					}
-					round.AddAlice(alice);
 
+					round.AddAlice(alice);
 					// All checks are good. Sign.
 					var blindSignatures = new List<uint256>();
 					for (int i = 0; i < acceptedBlindedOutputScripts.Count; i++)
@@ -476,12 +478,13 @@ namespace WalletWasabi.Backend.Controllers
 				case RoundPhase.InputRegistration:
 					{
 						round.RemoveAlicesBy(uniqueIdGuid);
+						round.QueueAlices(uniqueIdGuid);
 						return NoContent();
 					}
 				default:
 					{
 						return Gone($"Participation can be only unconfirmed from InputRegistration phase. Current phase: {phase}.");
-					}			
+					}
 			}
 		}
 

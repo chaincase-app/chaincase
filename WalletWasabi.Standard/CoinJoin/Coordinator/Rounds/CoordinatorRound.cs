@@ -120,6 +120,7 @@ namespace WalletWasabi.CoinJoin.Coordinator.Rounds
 
 		private List<Alice> Alices { get; }
 		private List<Bob> Bobs { get; } // Do not make it a hashset or do not make Bob IEquitable!!!
+		private List<Alice> QueuedAlices { get; }
 		private int UnconfirmedPeersAmount { get; set; }
 
 		private List<UnblindedSignature> RegisteredUnblindedSignatures { get; }
@@ -941,13 +942,13 @@ namespace WalletWasabi.CoinJoin.Coordinator.Rounds
 			return Alices.Count;
 		}
 
-		public int CountUnconfirmedPeers(bool syncLock = true)
+		public int CountQueuedAlices(bool syncLock = true)
 		{
 			if (syncLock)
 			{
 				using (RoundSynchronizerLock.Lock())
 				{
-					return UnconfirmedPeersAmount;
+					return QueuedAlices.Count;
 				}
 			}
 			return UnconfirmedPeersAmount;
@@ -1345,6 +1346,40 @@ namespace WalletWasabi.CoinJoin.Coordinator.Rounds
 			return await RpcClient.TestMempoolAcceptAsync(coinsToTest, fakeOutputCount: outputCount, FeePerInputs, FeePerOutputs).ConfigureAwait(false);
 		}
 
+		public void QueueAlices(params Guid[] ids)
+		{
+			using (RoundSynchronizerLock.Lock())
+			{
+				if ((Phase != RoundPhase.InputRegistration && Phase != RoundPhase.ConnectionConfirmation) || Status != CoordinatorRoundStatus.Running)
+				{
+					throw new InvalidOperationException("Queuing Alice is only allowed in InputRegistration and ConnectionConfirmation phases.");
+				}
+				foreach (var id in ids)
+				{
+					var alices = Alices.Where(x => x.UniqueId == id);
+					foreach (var alice in alices)
+					{
+						QueuedAlices.Add(alice);
+					}
+				}
+			}
+		}
+
+		public void DequeueAlices(params Guid[] ids)
+		{
+			using (RoundSynchronizerLock.Lock())
+			{
+				if ((Phase != RoundPhase.InputRegistration && Phase != RoundPhase.ConnectionConfirmation) || Status != CoordinatorRoundStatus.Running)
+				{
+					throw new InvalidOperationException("Dequeuing Alice is only allowed in InputRegistration and ConnectionConfirmation phases.");
+				}
+				foreach (var id in ids)
+				{
+					QueuedAlices.RemoveAll(x => x.UniqueId == id);
+				}
+			}
+		}
+
 		public int RemoveAlicesBy(params Guid[] ids)
 		{
 			var numberOfRemovedAlices = 0;
@@ -1357,7 +1392,6 @@ namespace WalletWasabi.CoinJoin.Coordinator.Rounds
 				foreach (var id in ids)
 				{
 					numberOfRemovedAlices = Alices.RemoveAll(x => x.UniqueId == id);
-					UnconfirmedPeersAmount += numberOfRemovedAlices;
 				}
 			}
 
