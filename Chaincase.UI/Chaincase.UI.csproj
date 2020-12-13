@@ -32,20 +32,10 @@
     <ItemGroup>
       <Folder Include="ViewModels\" />
       <Folder Include="Components\" />
-      <Folder Include="wwwroot\ionic\style\" />
     </ItemGroup>
 
     <ItemGroup>
       <Compile Remove="ViewModels\SendAmountPage.xaml.cs" />
-    </ItemGroup>
-    <ItemGroup>
-      <Content Remove="wwwroot\ionic\style\EmptyCSSFile.css" />
-    </ItemGroup>
-    <ItemGroup>
-      <EmbeddedResource Include="wwwroot\ionic\style\global.css">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </EmbeddedResource>
     </ItemGroup>
     <PropertyGroup>
         <!-- File with mtime of last successful npm install -->
