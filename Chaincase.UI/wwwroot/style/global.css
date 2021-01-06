@@ -156,3 +156,56 @@ body.dark {
 
     --ion-card-background: #1e1e1e;
 }
+
+.ios .transition {
+    padding-top: 44px;
+}
+
+.md .transition {
+
+    padding-top: 60px;
+}
+
+.transition {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+}
+.transition.out {
+    z-index:0;
+}
+.transition.out.slide-in {
+    animation: slide-back 0.5s forwards;
+    -webkit-animation: slide-back 0.5s forwards;
+}
+.transition:not(.out).slide-in {
+    transform: translateX(100%);
+}
+.transition:not(.out).slide-out {
+    transform: translateX(-100%);
+}
+.transition:not(.out) {
+    animation: slide-into-view 0.25s forwards;
+    -webkit-animation: slide-into-view 0.25s forwards;
+}
+.transition.out.slide-out {
+    animation: slide-forward 0.5s forwards;
+    -webkit-animation: slide-forward 0.5s forwards;
+}
+
+@keyframes slide-into-view {
+     100% {
+         transform: translateX(0);
+     }
+ }
+@keyframes slide-back {
+     100% {
+         transform: translateX(-100%);
+     }
+ }
+@keyframes slide-forward {
+     100% {
+         transform: translateX(100%);
+     }
+ }

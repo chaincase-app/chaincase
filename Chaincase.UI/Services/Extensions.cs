@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using BlazorTransitionableRoute;
 using Chaincase.Common;
 using Chaincase.UI.ViewModels;
 using Microsoft.AspNetCore.Components;
@@ -15,6 +16,7 @@ namespace Chaincase.UI.Services
 			services.AddSingleton<UIStateService>();
 
 			services.AddSingleton<Global>();
+			services.AddScoped<IRouteTransitionInvoker, DefaultRouteTransitionInvoker>();
 			services.AddSingleton<StackService>();
 			services.AddScoped<ThemeSwitcher>();
 			services.AddSingleton<QRCodeGenerator>();
@@ -31,6 +33,7 @@ namespace Chaincase.UI.Services
 
 		public static async Task NavigateBack(this NavigationManager navigationManager, IJSRuntime runtime, string route)
 		{
+			await runtime.InvokeVoidAsync("dispatchEventWrapper", "back");
 			navigationManager.NavigateTo(route);
 		}
 	}

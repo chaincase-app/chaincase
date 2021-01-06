@@ -1,0 +1,24 @@
+@inherits BlazorTransitionableRoute.TransitionableLayoutComponent
+<div class="transition @TransitionClass">
+    @Body
+</div>
+@code {
+
+    private string TransitionClass
+    {
+        get
+        {
+            var res = "";
+            if (!Transition.FirstRender)
+            {
+                if (!Transition.IntoView)
+                {
+                    res += "out ";
+                }
+                res += Transition.Backwards ? "slide-out" : "slide-in";
+            }
+            return res;
+        }
+    }
+
+}
