@@ -4,18 +4,25 @@ using Chaincase.Common.Contracts;
 
 namespace Chaincase.UI.Services
 {
+
 	public class UIStateService
 	{
+
+
+
 		private string _title;
+		private string _theme;
 		private bool _darkMode;
 		protected IThemeManager _themeManager;
+		protected Global _global;
 
 		public UIStateService(IThemeManager themeManager, Global global)
 		{
-			global.Resumed += (s, e) => SetSystemTheme();
-
+			global.Resumed += (s, e) => SetTheme();
+			_global = global;
+			Theme = _global.UiConfig.Theme;
 			_themeManager = themeManager;
-			themeManager.SubscribeToThemeChanged(() => SetSystemTheme());
+			themeManager.SubscribeToThemeChanged(() => SetTheme());
 		}
 
 		public string Title
@@ -28,9 +35,36 @@ namespace Chaincase.UI.Services
 			}
 		}
 
-		public void SetSystemTheme()
+		public string Theme
 		{
-			DarkMode = _themeManager.IsDarkTheme();
+			get => _theme;
+			set
+			{
+				_theme = value;
+				if (value != _global.UiConfig.Theme)
+				{
+					_global.UiConfig.Theme = value;
+					_global.UiConfig.ToFile();
+				}
+				SetTheme();
+			}
+		}
+
+		public void SetTheme()
+		{
+			switch(Theme)
+			{
+				case "light":
+					DarkMode = false;
+					break;
+				case "dark":
+					DarkMode = true;
+					break;
+				case "system":
+				default:
+					DarkMode = _themeManager.IsDarkTheme();
+					break;
+			}
 		}
 
 		public bool DarkMode

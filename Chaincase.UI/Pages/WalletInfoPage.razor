@@ -7,20 +7,25 @@
 @inherits ReactiveComponentBase<WalletInfoViewModel>
 
 <ion-content class="ion-padding">
-    <ion-label>ACCOUNT KEY PATH</ion-label>
+
+    <IonItem button OnClick="@NavigateToAppearance">
+        <ion-label>Appearance</ion-label>
+    </IonItem>
+
     <IonItem>
+        <ion-label position="floating">ACCOUNT KEY PATH</ion-label>
         <ion-label>@ViewModel.AccountKeyPath</ion-label>
     </IonItem>
 
-    <ion-label>EXTENDED PUBLIC KEY</ion-label>
     <IonItem>
+        <ion-label position="floating">EXTENDED PUBLIC KEY</ion-label>
         <ion-label>@ViewModel.ExtendedAccountPublicKey</ion-label>
     </IonItem>
 
-    <ion-list-header>
-        <ion-label>KEYS</ion-label>
-    </ion-list-header>
     <ion-list>
+        <ion-list-header>
+            <ion-label>KEYS</ion-label>
+        </ion-list-header>
         <IonItem button OnClick="@NavigateToBackUp">
             Back Up Seed Words
         </IonItem>
@@ -51,5 +56,14 @@
             await NavigationManager.NavigateBack(null, "/walletinfo");
         });
         NavigationManager.NavigateTo("/backup/start");
+    }
+
+    private void NavigateToAppearance()
+    {
+        StackService.PushStackState(async () =>
+        {
+            await NavigationManager.NavigateBack(null, "/walletinfo");
+        });
+        NavigationManager.NavigateTo("/walletinfo/appearance");
     }
 }

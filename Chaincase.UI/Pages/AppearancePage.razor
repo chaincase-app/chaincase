@@ -1,0 +1,34 @@
+﻿@page "/walletinfo/appearance"
+@using Chaincase.UI.Services
+@inject UIStateService UiStateService
+
+<ion-content>
+    <ion-list>
+        <IonRadioGroup @bind-Value="@UiStateService.Theme">
+            <ion-list-header>
+                <ion-label>THEME</ion-label>
+            </ion-list-header>
+            <ion-item>
+                <ion-label>System</ion-label>
+                <ion-radio slot="end" value="system"></ion-radio>
+            </ion-item>
+
+            <ion-item>
+                <ion-label>Light</ion-label>
+                <ion-radio slot="end" value="light"></ion-radio>
+            </ion-item>
+
+            <ion-item>
+                <ion-label>Dark</ion-label>
+                <ion-radio slot="end" value="dark"></ion-radio>
+            </ion-item>
+        </IonRadioGroup>
+    </ion-list>
+</ion-content>
+
+@code {
+    protected override void OnInitialized()
+    {
+        UiStateService.Title = "Appearance";
+    }
+}

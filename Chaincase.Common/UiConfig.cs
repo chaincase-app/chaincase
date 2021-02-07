@@ -8,10 +8,20 @@ namespace Chaincase.Common
     [JsonObject(MemberSerialization.OptIn)]
 	public class UiConfig : ConfigBase
 	{
+		private string _theme;
         private string _balance;
         private TransactionInfo[] _transactions = new TransactionInfo[0];
 		private bool _hasSeed;
 		private bool _isBackedUp;
+
+		[DefaultValue("System")]
+		[JsonProperty(PropertyName ="Theme", DefaultValueHandling = DefaultValueHandling.Populate)]
+		public string Theme
+		{
+			get => _theme;
+			set => RaiseAndSetIfChanged(ref _theme, value);
+		}
+
 
 		[DefaultValue("0")]
 		[JsonProperty(PropertyName = "Balance", DefaultValueHandling = DefaultValueHandling.Populate)]

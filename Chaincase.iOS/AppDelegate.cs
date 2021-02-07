@@ -1,6 +1,7 @@
 using Chaincase.Background;
 using Chaincase.Common;
 using Chaincase.Common.Contracts;
+using Chaincase.Services;
 using Chaincase.iOS.Backgrounding;
 using Chaincase.iOS.Tor;
 using Foundation;
@@ -51,13 +52,14 @@ namespace Chaincase.iOS
             UNUserNotificationCenter.Current.Delegate = 
                 formsApp.ServiceProvider.GetService<iOSNotificationReceiver>();
             LoadApplication(formsApp);
-
+            app.StatusBarStyle = UIStatusBarStyle.LightContent;
             return base.FinishedLaunching(app, options);
         }
 
         private void ConfigureDi(IServiceCollection obj)
         {
-            obj.AddSingleton<IThemeManager, ThemeManager>();
+            obj.AddSingleton<IStatusBar, iOSStatusBar>();
+            obj.AddSingleton<IThemeManager, XamarinThemeManager>();
 	        obj.AddSingleton<IHsmStorage, HsmStorage>();
 	        obj.AddSingleton<INotificationManager, iOSNotificationManager>();
 	        obj.AddSingleton<iOSNotificationReceiver>();

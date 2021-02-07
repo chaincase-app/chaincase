@@ -2,10 +2,10 @@
 
 ﻿ /* Hide stupid browsers password eye toggle*/
 
-ion-input {
+.neu-input {
+    --padding-start: 1rem;
     filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.9));
     box-shadow: .1rem .2rem .5rem rgba(255, 255, 255, 0.09);
-    --padding-start: 1rem !important;
 }
 
 input {
@@ -18,23 +18,33 @@ input::-ms-clear {
 }
 
 ion-button:not(.in-toolbar) {
-    font-weight: bold;
-    --background: linear-gradient(180deg, var(--ion-background-color) 0%, var(--ion-color-step-25) 100%);
+    --background: linear-gradient(180deg, rgba(0, 0, 0, 0.008) 0%, var(--ion-background-color) 100%);
     /* light shadow on top dark shadow below  ... these r gonna need to be swapped for light should be alpha based */
-    --box-shadow: 0 .1rem .1rem var(--ion-color-step--50), 0px -.07rem .12rem var(--ion-color-step-50);
+    --box-shadow: 0 .5rem .4rem rgba(0,0,0,0.08), 0 -.4rem .5rem rgba(255, 255, 255,1);
     text-transform: uppercase;
     --color: var(--ion-color-primary);
     --border-radius: 1.6rem;
     margin-top: 1rem;
     display: block;
-    --background-activated: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.08) 22.4%);
+    --background-activated: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0, rgba(0, 0, 0, 0.08) 26%);
 }
 
 ion-button.ion-activated {
-    --box-shadow: 0 -.4rem 1rem rgba(255, 255, 255, 0.01);
+    --box-shadow: 0 .4rem 1rem rgba(255, 255, 255, 1);
 }
 
-ion-button:not(.in-toolbar).button-disabled {
+body.dark ion-button:not(.in-toolbar) {
+    --background: linear-gradient(180deg, rgba(0, 0, 0, 0.16) 0%, var(--ion-color-step-25) 100%);
+    --box-shadow: 0 .5rem .4rem rgba(0,0,0,1), 0 -.4rem .5rem rgba(255, 255, 255, 0.08);
+    --background-activated: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.08) 26%);
+}
+
+body.dark ion-button.ion-activated {
+    --box-shadow: 0 .4rem 1rem rgba(255, 255, 255, 0.1);
+}
+
+ion-button:not(.in-toolbar).button-disabled,
+body.dark ion-button:not(.in-toolbar).button-disabled {
     --background: var(--ion-background-color);
     --padding-start: 0;
     --box-shadow: none;
@@ -44,8 +54,8 @@ ion-button:not(.in-toolbar).button-disabled {
     --border-color: var(--ion-color-step-200);
 }
 
-
 :root {
+
   --ion-color-primary: #5344f4;
   --ion-color-primary-rgb: 83,68,244;
   --ion-color-primary-contrast: #ffffff;
@@ -60,6 +70,37 @@ ion-button:not(.in-toolbar).button-disabled {
   --ion-color-secondary-shade: #e08700;
   --ion-color-secondary-tint: #ffa31a;
 
+
+  --ion-background-color: #F2F2F3;
+  --ion-background-color-rgb: 242,242,243;
+
+  --ion-text-color: #222222;
+  --ion-text-color-rgb: 34,34,34;
+
+  --ion-color-step--50: #ffffff;
+  --ion-color-step-25: #ededee;
+
+
+  --ion-color-step-50: #e8e8e9;
+  --ion-color-step-100: #ddddde;
+  --ion-color-step-150: #d3d3d4;
+  --ion-color-step-200: #c8c8c9;
+  --ion-color-step-250: #bebebf;
+  --ion-color-step-300: #b4b4b4;
+  --ion-color-step-350: #a9a9aa;
+  --ion-color-step-400: #9f9f9f;
+  --ion-color-step-450: #949495;
+  --ion-color-step-500: #8a8a8b;
+  --ion-color-step-550: #808080;
+  --ion-color-step-600: #757576;
+  --ion-color-step-650: #6b6b6b;
+  --ion-color-step-700: #606061;
+  --ion-color-step-750: #565656;
+  --ion-color-step-800: #4c4c4c;
+  --ion-color-step-850: #414141;
+  --ion-color-step-900: #373737;
+  --ion-color-step-950: #2c2c2c;
+
 }
 
 /*
@@ -68,12 +109,12 @@ ion-button:not(.in-toolbar).button-disabled {
  */
 
 body.dark {
-    --ion-color-primary: #5344f4;
-    --ion-color-primary-rgb: 83,68,244;
+    --ion-color-primary: #7165F6;
+    --ion-color-primary-rgb: 113,101,246;
     --ion-color-primary-contrast: #ffffff;
     --ion-color-primary-contrast-rgb: 255,255,255;
-    --ion-color-primary-shade: #493cd7;
-    --ion-color-primary-tint: #6457f5;
+    --ion-color-primary-shade: #6359d8;
+    --ion-color-primary-tint: #7f74f7;
 
     --ion-color-secondary: #FF9900;
     --ion-color-secondary-rgb: 255,153,0;
@@ -137,7 +178,7 @@ body.dark {
  * -------------------------------------------
  */
 
-.ios body.dark {
+/*.ios body.dark {
     --ion-background-color: #000000;
     --ion-background-color-rgb: 0,0,0;
 
@@ -169,15 +210,18 @@ body.dark {
     --ion-item-background: #000000;
 
     --ion-card-background: #1c1c1d;
-}
+}*/
 
 
 /*
- * Material Design Dark Theme
+ * Dark Theme
  * -------------------------------------------
  */
 
-.md body.dark {
+.md body.dark,
+.ios body.dark {
+
+
     --ion-background-color: #121212;
     --ion-background-color-rgb: 18,18,18;
 
@@ -186,6 +230,9 @@ body.dark {
 
     --ion-border-color: #222222;
 
+    --ion-color-step--50: #0f0f0f;
+
+    --ion-color-step-25: #181818;
     --ion-color-step-50: #1e1e1e;
     --ion-color-step-100: #2a2a2a;
     --ion-color-step-150: #363636;

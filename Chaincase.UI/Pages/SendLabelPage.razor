@@ -11,8 +11,8 @@
 <ion-content class="ion-padding">
     <h1>Send bitcoin</h1>
 
-    <ion-label floating>Label</ion-label>
-    <IonInput @bind-Value="@ViewModel.Label" placeholder="This transaction is for..." />
+    <ion-label floating>Contact Label</ion-label>
+    <IonInput @bind-Value="@ViewModel.Label" placeholder="e.g. Bob, Me, Mt. Fox..." debounce="16"/>
 
     <IonButton OnClick="OnContinue" expand="block" disabled="@IsLabelEmpty">CONTINUE</IonButton>
 </ion-content>

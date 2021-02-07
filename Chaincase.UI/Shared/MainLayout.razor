@@ -42,7 +42,7 @@
         StackService.StackStateChanged += OnStateServiceOnStateChanged;
         OnStateServiceOnStateChanged();
         StateService.ThemeChanged += StateServiceOnThemeChanged;
-        StateService.SetSystemTheme();
+        StateService.SetTheme();
     }
 
     private void StateServiceOnThemeChanged()

@@ -84,7 +84,7 @@
     <Compile Include="Backgrounding\iOSOnSleepingTask.cs" />
     <Compile Include="Backgrounding\iOSInitializeNoWalletContext.cs" />
     <Compile Include="LiveSharp.dashboard.cs" />
-    <Compile Include="ThemeManager.cs" />
+    <Compile Include="iOSStatusBar.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -165,7 +165,7 @@
       <Name>Chaincase</Name>
     </ProjectReference>
     <ProjectReference Include="..\WalletWasabi\WalletWasabi.Standard\WalletWasabi.Standard.csproj">
-      <Project>{0D4DDFEC-7BFA-47D4-8244-6CD3879DCDA4}</Project>
+      <Project>{35EC6FF8-2B20-4E83-8399-D429DACE3D85}</Project>
       <Name>WalletWasabi.Standard</Name>
     </ProjectReference>
     <ProjectReference Include="..\TorFramework\TorFramework.csproj">

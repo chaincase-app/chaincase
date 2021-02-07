@@ -11,5 +11,10 @@ namespace Chaincase.SSB
         {
             return;
         }
-    }
+
+		public void SetUserTheme(string theme)
+		{
+            return;
+		}
+	}
 }
