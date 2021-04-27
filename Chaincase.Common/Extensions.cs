@@ -47,8 +47,8 @@ namespace Chaincase.Common
             });
             services.AddSingleton(x =>
             {
-	            var config = x.GetRequiredService<IOptions<Config>>();
-	            var network = config.Value.Network;
+                var config = x.GetRequiredService<IOptions<Config>>();
+                var network = config.Value.Network;
                 var bitcoinStore = x.GetRequiredService<BitcoinStore>();
 
                 if (config.Value.UseTor)
