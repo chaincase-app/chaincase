@@ -9,7 +9,8 @@ using Chaincase.Common;
 using Chaincase.Common.Contracts;
 using Chaincase.Common.Models;
 using Chaincase.Common.Services;
-using NBitcoin;
+ using Microsoft.Extensions.Options;
+ using NBitcoin;
 using ReactiveUI;
 using WalletWasabi.Blockchain.Keys;
 using WalletWasabi.Blockchain.Transactions;
@@ -24,8 +25,8 @@ namespace Chaincase.UI.ViewModels
     {
         private readonly IMainThreadInvoker _mainThreadInvoker;
         private readonly ChaincaseWalletManager _walletManager;
-        private readonly Config _config;
-        private readonly UiConfig _uiConfig;
+        private readonly IOptions<Config> _config;
+        private readonly IOptions<UiConfig> _uiConfig;
         private readonly BitcoinStore _bitcoinStore;
 
         private ObservableCollection<TransactionViewModel> _transactions;
@@ -36,7 +37,7 @@ namespace Chaincase.UI.ViewModels
         private ObservableAsPropertyHelper<bool> _canBackUp;
         private bool _isWalletInitialized;
 
-        public OverviewViewModel(ChaincaseWalletManager walletManager, Config config, UiConfig uiConfig, BitcoinStore bitcoinStore, IMainThreadInvoker mainThreadInvoker)
+        public OverviewViewModel(ChaincaseWalletManager walletManager, IOptions<Config> config, IOptions<UiConfig> uiConfig, BitcoinStore bitcoinStore, IMainThreadInvoker mainThreadInvoker)
         {
             _walletManager = walletManager;
             _config = config;
@@ -53,10 +54,10 @@ namespace Chaincase.UI.ViewModels
                 TryWriteTableFromCache();
             }
 
-            _hasSeed = this.WhenAnyValue(x => x._uiConfig.HasSeed)
+            _hasSeed = this.WhenAnyValue(x => x._uiConfig.Value.HasSeed)
                 .ToProperty(this, nameof(HasSeed));
 
-            _isBackedUp = this.WhenAnyValue(x => x._uiConfig.IsBackedUp)
+            _isBackedUp = this.WhenAnyValue(x => x._uiConfig.Value.IsBackedUp)
                 .ToProperty(this, nameof(IsBackedUp));
 
             var canBackUp = this.WhenAnyValue(x => x.HasSeed, x => x.IsBackedUp,
@@ -64,7 +65,7 @@ namespace Chaincase.UI.ViewModels
 
             canBackUp.ToProperty(this, x => x.CanBackUp, out _canBackUp);
 
-            Balance = _uiConfig.Balance;
+            Balance = _uiConfig.Value.Balance;
 
             Initializing += OnInit;
             Initializing(this, EventArgs.Empty);
@@ -107,7 +108,7 @@ namespace Chaincase.UI.ViewModels
         {
             try
             {
-                var trs = _uiConfig.Transactions?.Select(ti => new TransactionViewModel(ti)) ?? new TransactionViewModel[0];
+                var trs = _uiConfig.Value.Transactions?.Select(ti => new TransactionViewModel(ti)) ?? new TransactionViewModel[0];
                 Transactions = new ObservableCollection<TransactionViewModel>(trs.OrderByDescending(t => t.DateString));
             }
             catch (Exception ex)
@@ -138,8 +139,8 @@ namespace Chaincase.UI.ViewModels
 
                 Transactions = new ObservableCollection<TransactionViewModel>(trs.OrderByDescending(t => t.DateString));
 
-                _uiConfig.Transactions = tis.ToArray();
-                _uiConfig.ToFile(); // write to file once height is the highest
+                _uiConfig.Value.Transactions = tis.ToArray();
+                _uiConfig.Value.ToFile(); // write to file once height is the highest
             }
             catch (Exception ex)
             {
@@ -149,7 +150,7 @@ namespace Chaincase.UI.ViewModels
 
         private async Task LoadWalletAsync()
         {
-            string walletName = _config.Network.ToString();
+            string walletName = _config.Value.Network.ToString();
             KeyManager keyManager = _walletManager.GetWalletByName(walletName).KeyManager;
             if (keyManager is null)
             {

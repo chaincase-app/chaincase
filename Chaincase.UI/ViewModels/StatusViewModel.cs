@@ -6,6 +6,7 @@ using Chaincase.Common;
 using Chaincase.Common.Contracts;
 using Chaincase.Common.Models;
 using Chaincase.Common.Services;
+using Microsoft.Extensions.Options;
 using NBitcoin.Protocol;
 using ReactiveUI;
 using WalletWasabi.Blockchain.Blocks;
@@ -20,8 +21,8 @@ namespace Chaincase.UI.ViewModels
     public class StatusViewModel : ReactiveObject
     {
         private readonly Global _global;
-        private readonly Config _Config;
-        private readonly UiConfig _uiConfig;
+        private readonly IOptions<Config> _config;
+        private readonly IOptions<UiConfig> _uiConfig;
         private readonly ChaincaseWalletManager _walletManager;
         private readonly BitcoinStore _bitcoinStore;
         private SmartHeaderChain HashChain => _bitcoinStore.SmartHeaderChain;
@@ -46,12 +47,12 @@ namespace Chaincase.UI.ViewModels
         private bool _downloadingBlock;
         private StatusSet ActiveStatuses { get; }
 
-        public StatusViewModel(Global global, ChaincaseWalletManager walletManager, Config config, UiConfig uiConfig, BitcoinStore bitcoinStore, ChaincaseSynchronizer synchronizer)
+        public StatusViewModel(Global global, ChaincaseWalletManager walletManager, IOptions<Config> config, IOptions<UiConfig> uiConfig, BitcoinStore bitcoinStore, ChaincaseSynchronizer synchronizer)
         {
             _global = global;
             _walletManager = walletManager;
             _bitcoinStore = bitcoinStore;
-            _Config = config;
+            _config = config;
             _uiConfig = uiConfig;
             _synchronizer = synchronizer;
             Backend = BackendStatus.NotConnected;
@@ -59,7 +60,7 @@ namespace Chaincase.UI.ViewModels
             Peers = 0;
             BtcPrice = "$0";
             ActiveStatuses = new StatusSet();
-            UseTor = _Config.UseTor; // Do not make it dynamic, because if you change this config settings only next time will it activate.
+            UseTor = _config.Value.UseTor; // Do not make it dynamic, because if you change this config settings only next time will it activate.
 
             if (_global.IsInitialized)
             {
@@ -158,8 +159,8 @@ namespace Chaincase.UI.ViewModels
                     {
                         walletCheckingInterval?.Dispose();
                         walletCheckingInterval = null;
-                        _uiConfig.Balance = _walletManager.CurrentWallet.Coins.TotalAmount().ToString();
-                        _uiConfig.ToFile();
+                        _uiConfig.Value.Balance = _walletManager.CurrentWallet.Coins.TotalAmount().ToString();
+                        _uiConfig.Value.ToFile();
                         TryRemoveStatus(StatusType.WalletLoading, StatusType.WalletProcessingFilters, StatusType.WalletProcessingTransactions);
                     }
                 })

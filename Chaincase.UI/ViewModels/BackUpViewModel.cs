@@ -4,19 +4,20 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Chaincase.Common;
 using Chaincase.Common.Contracts;
+using Microsoft.Extensions.Options;
 using ReactiveUI;
 
 namespace Chaincase.UI.ViewModels
 {
     public class BackUpViewModel : ReactiveObject
     {
-        private Config Config { get; }
-        private UiConfig UiConfig { get; }
+        private IOptions<Config> Config { get; }
+        private IOptions<UiConfig> UiConfig { get; }
         protected IHsmStorage HSM { get; }
 
         private List<string> _seedWords;
 
-        public BackUpViewModel(Config config, UiConfig uiConfig, IHsmStorage hsm)
+        public BackUpViewModel(IOptions<Config> config, IOptions<UiConfig> uiConfig, IHsmStorage hsm)
         {
             Config = config;
             UiConfig = uiConfig;
@@ -25,7 +26,7 @@ namespace Chaincase.UI.ViewModels
 
         public async Task<bool> HasGotSeedWords()
         {
-            var seedWords = await HSM.GetAsync($"{Config.Network}-seedWords");
+            var seedWords = await HSM.GetAsync($"{Config.Value.Network}-seedWords");
             if (seedWords is null) return false;
 
             SeedWords = seedWords.Split(' ').ToList();
@@ -34,8 +35,8 @@ namespace Chaincase.UI.ViewModels
 
         public void SetIsBackedUp()
         {
-            UiConfig.IsBackedUp = true;
-            UiConfig.ToFile(); // successfully backed up!
+            UiConfig.Value.IsBackedUp = true;
+            UiConfig.Value.ToFile(); // successfully backed up!
         }
 
         public List<string> SeedWords

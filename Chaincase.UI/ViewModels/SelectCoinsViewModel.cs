@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Chaincase.Common;
 using Chaincase.Common.Services;
 using DynamicData;
+using Microsoft.Extensions.Options;
 using NBitcoin;
 using ReactiveUI;
 using WalletWasabi.Blockchain.TransactionOutputs;
@@ -21,7 +22,7 @@ namespace Chaincase.UI.ViewModels
     public class SelectCoinsViewModel : ReactiveObject
     {
         private readonly ChaincaseWalletManager _walletManager;
-        private readonly Config _config;
+        private readonly IOptions<Config> _config;
         private readonly BitcoinStore _bitcoinStore;
 
         private CompositeDisposable Disposables { get; set; }
@@ -38,7 +39,7 @@ namespace Chaincase.UI.ViewModels
 
         // public ReactiveCommand<CoinViewModel, Unit> OpenCoinDetail;
 
-        public SelectCoinsViewModel(ChaincaseWalletManager walletManager, Config config, BitcoinStore bitcoinStore, bool isPrivate = false)
+        public SelectCoinsViewModel(ChaincaseWalletManager walletManager, IOptions<Config> config, BitcoinStore bitcoinStore, bool isPrivate = false)
         {
             _walletManager = walletManager;
             _config = config;
@@ -182,7 +183,7 @@ namespace Chaincase.UI.ViewModels
 
         private void ClearRootList() => RootList.Clear();
 
-        public void SelectPrivateCoins() => SelectCoins(x => x.AnonymitySet >= _config.PrivacyLevelSome);
+        public void SelectPrivateCoins() => SelectCoins(x => x.AnonymitySet >= _config.Value.PrivacyLevelSome);
 
         public void AfterDismissed()
         {

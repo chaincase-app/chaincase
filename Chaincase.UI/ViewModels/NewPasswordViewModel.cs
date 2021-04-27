@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using Chaincase.Common;
 using Chaincase.Common.Contracts;
+using Microsoft.Extensions.Options;
 using NBitcoin;
 using ReactiveUI;
 using WalletWasabi.Blockchain.Keys;
@@ -12,11 +13,11 @@ namespace Chaincase.UI.ViewModels
 	public class NewPasswordViewModel : ReactiveObject
 	{
 		private readonly WalletManager _walletManager;
-		private readonly Config _config;
-		private readonly UiConfig _uiConfig;
+		private readonly IOptions<Config> _config;
+		private readonly IOptions<UiConfig> _uiConfig;
 		private readonly IHsmStorage _hsm;
 
-		public NewPasswordViewModel(WalletManager walletManager, Config config, UiConfig uiConfig, IHsmStorage hsmStorage)
+		public NewPasswordViewModel(WalletManager walletManager, IOptions<Config> config, IOptions<UiConfig> uiConfig, IHsmStorage hsmStorage)
 		{
 			_walletManager = walletManager;
 			_config = config;
@@ -31,13 +32,13 @@ namespace Chaincase.UI.ViewModels
 			// Todo what do we do if PasswordHelper.Guard fails?
 			PasswordHelper.Guard(password);
 
-			string walletFilePath = Path.Combine(_walletManager.WalletDirectories.WalletsDir, $"{_config.Network}.json");
+			string walletFilePath = Path.Combine(_walletManager.WalletDirectories.WalletsDir, $"{_config.Value.Network}.json");
 			KeyManager.CreateNew(out Mnemonic seedWords, password, walletFilePath);
 			// MUST prompt permissions
-			_hsm.SetAsync($"{_config.Network}-seedWords", seedWords.ToString());
+			_hsm.SetAsync($"{_config.Value.Network}-seedWords", seedWords.ToString());
 
-			_uiConfig.HasSeed = true;
-			_uiConfig.ToFile();
+			_uiConfig.Value.HasSeed = true;
+			_uiConfig.Value.ToFile();
 		}
 	}
 }

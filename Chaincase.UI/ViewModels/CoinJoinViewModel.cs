@@ -11,6 +11,7 @@ using Chaincase.Common;
 using Chaincase.Common.Contracts;
 using Chaincase.Common.Models;
 using Chaincase.Common.Services;
+using Microsoft.Extensions.Options;
 using NBitcoin;
 using ReactiveUI;
 using WalletWasabi.Blockchain.Keys;
@@ -27,7 +28,7 @@ namespace Chaincase.UI.ViewModels
     public class CoinJoinViewModel : ReactiveObject
     {
         private readonly ChaincaseWalletManager _walletManager;
-        private readonly Config _config;
+        private readonly IOptions<Config> _config;
         private readonly INotificationManager _notificationManager;
 
         private CompositeDisposable Disposables { get; set; }
@@ -50,7 +51,7 @@ namespace Chaincase.UI.ViewModels
         private bool _shouldShowErrorToast;
         private SelectCoinsViewModel _selectCoinsViewModel;
 
-        public CoinJoinViewModel(ChaincaseWalletManager walletManager, Config config, INotificationManager notificationManager, SelectCoinsViewModel selectCoinsViewModel)
+        public CoinJoinViewModel(ChaincaseWalletManager walletManager, IOptions<Config> config, INotificationManager notificationManager, SelectCoinsViewModel selectCoinsViewModel)
         {
             _walletManager = walletManager;
             _config = config;
@@ -211,7 +212,7 @@ namespace Chaincase.UI.ViewModels
                 {
                     var available = coins.Confirmed().Available();
                     RequiredBTC = available.Any()
-                        ? registrableRound.State.CalculateRequiredAmount(available.Where(x => x.AnonymitySet < _config.PrivacyLevelStrong).Select(x => x.Amount).ToArray())
+                        ? registrableRound.State.CalculateRequiredAmount(available.Where(x => x.AnonymitySet < _config.Value.PrivacyLevelStrong).Select(x => x.Amount).ToArray())
                         : registrableRound.State.CalculateRequiredAmount();
                 }
             }
@@ -219,7 +220,7 @@ namespace Chaincase.UI.ViewModels
 
         private bool IsPasswordValid(string password)
         {
-            string walletFilePath = Path.Combine(_walletManager.WalletDirectories.WalletsDir, $"{_config.Network}.json");
+            string walletFilePath = Path.Combine(_walletManager.WalletDirectories.WalletsDir, $"{_config.Value.Network}.json");
             ExtKey keyOnDisk;
             try
             {
