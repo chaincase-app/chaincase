@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.IO;
+using Chaincase.Common;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace Chaincase.SSB
 {
@@ -16,8 +13,18 @@ namespace Chaincase.SSB
 			CreateHostBuilder(args).Build().Run();
 		}
 
-		public static IHostBuilder CreateHostBuilder(string[] args) =>
-			Host.CreateDefaultBuilder(args)
-				.ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+		public static IHostBuilder CreateHostBuilder(string[] args)
+		{
+			var dataDirProvider = new SSBDataDirProvider();
+			return Host.CreateDefaultBuilder(args)
+				.ConfigureWebHostDefaults(webBuilder =>
+				{
+					webBuilder.ConfigureAppConfiguration(builder => builder.Add(new JsonConfigurationSource()
+					{
+						Path = Path.Combine(dataDirProvider.Get(), Config.FILENAME),
+						Optional = true
+					})).UseStartup<Startup>();
+				});
+		}
 	}
 }

@@ -32,6 +32,11 @@ namespace Chaincase.Common
         private int _privacyLevelFine;
         private int _privacyLevelStrong;
 
+        public Config()
+        {
+	        
+        }
+        
         [JsonProperty(PropertyName = "Network")]
         [JsonConverter(typeof(NetworkJsonConverter))]
         public NBitcoin.Network Network { get; internal set; } = NBitcoin.Network.Main;
@@ -246,7 +251,7 @@ namespace Chaincase.Common
             }
         }
 
-        const string FILENAME = "Config.json";
+        public const string FILENAME = "Config.json";
 
         public Config(IDataDirProvider dataDirProvider)
             : base(Path.Combine(dataDirProvider.Get(), FILENAME))
@@ -310,9 +315,8 @@ namespace Chaincase.Common
             }
         }
 
-        public static async Task<Config> LoadOrCreateDefaultFileAsync(string path)
+        public static int GetNormalizeAnonSet(Config config)
         {
-            var config = new Config(path);
             config.LoadOrCreateDefaultFile();
 
             // MixUntilAnonymitySet sanity check.
@@ -322,19 +326,19 @@ namespace Chaincase.Common
             {
                 if (config.MixUntilAnonymitySet < config.PrivacyLevelSome)
                 {
-                    config.MixUntilAnonymitySet = config.PrivacyLevelSome;
+                    return config.PrivacyLevelSome;
                 }
                 else if (config.MixUntilAnonymitySet < config.PrivacyLevelFine)
                 {
-                    config.MixUntilAnonymitySet = config.PrivacyLevelFine;
+	                return  config.PrivacyLevelFine;
                 }
                 else
                 {
-                    config.MixUntilAnonymitySet = config.PrivacyLevelStrong;
+	                return  config.PrivacyLevelStrong;
                 }
             }
 
-            return config;
+            return config.MixUntilAnonymitySet;
         }
 
         protected override bool TryEnsureBackwardsCompatibility(string jsonString)

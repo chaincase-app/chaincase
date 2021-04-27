@@ -22,6 +22,7 @@ using WalletWasabi.Blockchain.TransactionBuilding;
 using WalletWasabi.Exceptions;
 using Chaincase.Common.Services;
 using Chaincase.Common.Contracts;
+using Microsoft.Extensions.Options;
 using WalletWasabi.Blockchain.TransactionBroadcasting;
 
 namespace Chaincase.UI.ViewModels
@@ -32,8 +33,8 @@ namespace Chaincase.UI.ViewModels
 
         private readonly Global _global;
         private readonly ChaincaseWalletManager _walletManager;
-        private readonly Config _config;
-        private readonly UiConfig _uiConfig;
+        private readonly IOptions<Config> _config;
+        private readonly IOptions<UiConfig> _uiConfig;
         private readonly FeeProviders _feeProviders;
 
         private bool _isMax;
@@ -58,7 +59,7 @@ namespace Chaincase.UI.ViewModels
 
         protected CompositeDisposable Disposables { get; } = new CompositeDisposable();
 
-        public SendViewModel(Global global, ChaincaseWalletManager walletManager, Config config, UiConfig uiConfig, SelectCoinsViewModel selectCoinsViewModel, FeeProviders feeProviders)
+        public SendViewModel(Global global, ChaincaseWalletManager walletManager, IOptions<Config> config, IOptions<UiConfig> uiConfig, SelectCoinsViewModel selectCoinsViewModel, FeeProviders feeProviders)
         {
             _global = global;
             _walletManager = walletManager;
@@ -103,7 +104,7 @@ namespace Chaincase.UI.ViewModels
                 .ToProperty(this, x => x.MinMaxFeeTargetsEqual, scheduler: RxApp.MainThreadScheduler);
 
             SetFeeTargetLimits();
-            FeeTarget = _uiConfig.FeeTarget;
+            FeeTarget = _uiConfig.Value.FeeTarget;
             FeeRate = new FeeRate((decimal)50); //50 sat/vByte placeholder til loads
 
             this.WhenAnyValue(x => x.FeeTarget)
@@ -165,7 +166,7 @@ namespace Chaincase.UI.ViewModels
             BitcoinUrlBuilder url = null;
             try
             {
-                url = new BitcoinUrlBuilder(destinationString, _config.Network);
+                url = new BitcoinUrlBuilder(destinationString, _config.Value.Network);
                 if (url.Amount != null)
                 {
                     // since AmountText can be altered by hand, we set it instead
@@ -181,7 +182,7 @@ namespace Chaincase.UI.ViewModels
 
             try
             {
-                BitcoinAddress address = BitcoinAddress.Create(destinationString.Trim(), _config.Network);
+                BitcoinAddress address = BitcoinAddress.Create(destinationString.Trim(), _config.Value.Network);
                 url = new BitcoinUrlBuilder();
                 url.Address = address;
             }

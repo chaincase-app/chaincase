@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using Chaincase.Common;
 using Chaincase.Common.Models;
 using Chaincase.Common.Services;
+using Microsoft.Extensions.Options;
 using NBitcoin;
 using ReactiveUI;
 using WalletWasabi.Blockchain.TransactionOutputs;
@@ -20,7 +21,7 @@ namespace Chaincase.UI.ViewModels
 	public class CoinViewModel : ReactiveObject
 	{
 		private readonly ChaincaseWalletManager _walletManager;
-		private readonly Config _config;
+		private readonly IOptions<Config> _config;
 		private readonly BitcoinStore _bitcoinStore;
 
 		public CompositeDisposable Disposables { get; set; }
@@ -35,7 +36,7 @@ namespace Chaincase.UI.ViewModels
 
 		public ReactiveCommand<Unit, Unit> NavBackCommand;
 
-		public CoinViewModel(ChaincaseWalletManager walletManager, Config config, BitcoinStore bitcoinStore, SmartCoin model)
+		public CoinViewModel(ChaincaseWalletManager walletManager, IOptions<Config> config, BitcoinStore bitcoinStore, SmartCoin model)
 		{
 			_walletManager = walletManager;
 			_config = config;
@@ -95,7 +96,7 @@ namespace Chaincase.UI.ViewModels
 
 		public bool Unspent => _unspent?.Value ?? false;
 
-		public string Address => Model.ScriptPubKey.GetDestinationAddress(_config.Network).ToString();
+		public string Address => Model.ScriptPubKey.GetDestinationAddress(_config.Value.Network).ToString();
 
 		public int Confirmations => Model.Height.Type == HeightType.Chain
 			? (int)_bitcoinStore.SmartHeaderChain.TipHeight - Model.Height.Value + 1

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Chaincase.Common.Contracts;
 using Chaincase.Common.Services;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using NBitcoin;
 using NBitcoin.Protocol;
 using NBitcoin.Protocol.Behaviors;
@@ -28,9 +29,9 @@ namespace Chaincase.Common
 {
     public class Global
     {
-        private readonly Config _config;
-        private Network Network => _config.Network;
-        private readonly UiConfig _uiConfig;
+        private readonly IOptions<Config> _config;
+        private Network Network => _config.Value.Network;
+        private readonly IOptions<UiConfig> _uiConfig;
         private readonly BitcoinStore _bitcoinStore;
         private readonly ChaincaseWalletManager _walletManager;
         private readonly ITorManager _torManager;
@@ -64,8 +65,8 @@ namespace Chaincase.Common
         public Global(
             ITorManager torManager,
             IDataDirProvider dataDirProvider,
-            Config config,
-            UiConfig uiConfig,
+            IOptions<Config> config,
+            IOptions<UiConfig> uiConfig,
             ChaincaseWalletManager walletManager,
             BitcoinStore bitcoinStore,
             ChaincaseSynchronizer synchronizer,
@@ -84,7 +85,7 @@ namespace Chaincase.Common
             {
                 StoppingCts = new CancellationTokenSource();
                 Logger.InitializeDefaults(Path.Combine(DataDir, "Logs.txt"));
-                _uiConfig.LoadOrCreateDefaultFile();
+                _uiConfig.Value.LoadOrCreateDefaultFile();
             }
         }
 
@@ -115,7 +116,7 @@ namespace Chaincase.Common
 
                 #region TorProcessInitialization
 
-                if (_config.UseTor)
+                if (_config.Value.UseTor)
                 {
                     await _torManager.StartAsync(ensureRunning: false, DataDir);
                     Logger.LogInfo($"{nameof(_torManager)} is initialized.");
@@ -154,7 +155,7 @@ namespace Chaincase.Common
                     Nodes = new NodesGroup(Network, requirements: Constants.NodeRequirements);
                     try
                     {
-                        EndPoint bitcoinCoreEndpoint = _config.GetBitcoinP2pEndPoint();
+                        EndPoint bitcoinCoreEndpoint = _config.Value.GetBitcoinP2pEndPoint();
 
                         Node node = await Node.ConnectAsync(NBitcoin.Network.RegTest, bitcoinCoreEndpoint).ConfigureAwait(false);
 
@@ -171,10 +172,10 @@ namespace Chaincase.Common
                 }
                 else
                 {
-                    if (_config.UseTor)
+                    if (_config.Value.UseTor)
                     {
                         // onlyForOnionHosts: false - Connect to clearnet IPs through Tor, too.
-                        connectionParameters.TemplateBehaviors.Add(new SocksSettingsBehavior(_config.TorSocks5EndPoint, onlyForOnionHosts: false, networkCredential: null, streamIsolation: true));
+                        connectionParameters.TemplateBehaviors.Add(new SocksSettingsBehavior(_config.Value.TorSocks5EndPoint, onlyForOnionHosts: false, networkCredential: null, streamIsolation: true));
                         // allowOnlyTorEndpoints: true - Connect only to onions and don't connect to clearnet IPs at all.
                         // This of course makes the first setting unneccessary, but it's better if that's around, in case someone wants to tinker here.
                         connectionParameters.EndpointConnector = new DefaultEndpointConnector(allowOnlyTorEndpoints: Network == Network.Main);
@@ -221,13 +222,13 @@ namespace Chaincase.Common
 
                 var blockProvider = new CachedBlockProvider(
                     new SmartBlockProvider(
-                        new P2pBlockProvider(Nodes, null, _synchronizer, _config.ServiceConfiguration, Network),
+                        new P2pBlockProvider(Nodes, null, _synchronizer, _config.Value.ServiceConfiguration, Network),
                         Cache),
                     new FileSystemBlockRepository(blocksFolderPath, Network));
 
                 #endregion Blocks provider
 
-                _walletManager.RegisterServices(_bitcoinStore, _synchronizer, Nodes, _config.ServiceConfiguration, _feeProviders, blockProvider);
+                _walletManager.RegisterServices(_bitcoinStore, _synchronizer, Nodes, _config.Value.ServiceConfiguration, _feeProviders, blockProvider);
 
                 Initialized(this, new AppInitializedEventArgs(this));
                 IsInitialized = true;
@@ -262,7 +263,7 @@ namespace Chaincase.Common
                     // of course).
                     // On the other side, increasing this number forces users that do not need to discover more peers
                     // to spend resources (CPU/bandwidth) to discover new peers.
-                    needsToDiscoverPeers = _config.UseTor == true || AddressManager.Count < 500;
+                    needsToDiscoverPeers = _config.Value.UseTor == true || AddressManager.Count < 500;
                     Logger.LogInfo($"Loaded {nameof(AddressManager)} from `{AddressManagerFilePath}`.");
                 }
                 catch (DirectoryNotFoundException ex)
@@ -462,7 +463,7 @@ namespace Chaincase.Common
                         var addressManager = AddressManager;
                         if (addressManager is { })
                         {
-                            addressManager.SavePeerFile(AddressManagerFilePath, _config.Network);
+                            addressManager.SavePeerFile(AddressManagerFilePath, _config.Value.Network);
                             Logger.LogInfo($"{nameof(Global)}.OnSleeping():{nameof(AddressManager)} is saved to `{AddressManagerFilePath}`.");
                         }
                     }

@@ -2,9 +2,8 @@
 using Android.Content.PM;
 using Android.Runtime;
 using Android.OS;
-using Chaincase.Common;
 using Chaincase.Common.Contracts;
-using Chaincase.Common.Xamarin;
+using Chaincase.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.MobileBlazorBindings.WebView.Android;
 

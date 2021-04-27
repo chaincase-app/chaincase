@@ -1,5 +1,6 @@
 ﻿@using Chaincase.Common
-@inject Config Config 
+@using Microsoft.Extensions.Options
+@inject IOptions<Config> Config 
 @inherits ReactiveComponentBase<CoinViewModel>
 
 <IonItem>
@@ -23,6 +24,6 @@
     }
 
     private string PrivacyLabel(int anonymitySet) =>
-        anonymitySet >= Config.PrivacyLevelSome ? "🗽" : "⚠️";
+        anonymitySet >= Config.Value.PrivacyLevelSome ? "🗽" : "⚠️";
 
 }
