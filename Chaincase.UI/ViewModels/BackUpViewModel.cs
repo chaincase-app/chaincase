@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Chaincase.Common;
 using Chaincase.Common.Contracts;
 using Chaincase.Common.Services;
+using Cryptor = Chaincase.Common.Services.AesThenHmac;
 using ReactiveUI;
 using WalletWasabi.Blockchain.Keys;
 using WalletWasabi.Helpers;
@@ -20,7 +21,8 @@ namespace Chaincase.UI.ViewModels
         private readonly UiConfig _uiConfig;
         private readonly IHsmStorage _hsm;
         private readonly SensitiveStorage _storage;
-        private readonly WalletManager _walletManager;
+        private readonly ChaincaseWalletManager _walletManager;
+        private readonly IiCloudService _iCloud;
         private List<string> _seedWords;
 
         public bool IsBusy { get; set; }
@@ -28,13 +30,14 @@ namespace Chaincase.UI.ViewModels
 
         private string LegacyWordsLoc => $"{_config.Network}-seedWords";
 
-        public BackUpViewModel(Config config, UiConfig uiConfig, IHsmStorage hsm, SensitiveStorage storage, ChaincaseWalletManager walletManager)
+        public BackUpViewModel(Config config, UiConfig uiConfig, IHsmStorage hsm, SensitiveStorage storage, ChaincaseWalletManager walletManager, IiCloudService iCloud)
         {
             _config = config;
             _uiConfig = uiConfig;
             _hsm = hsm;
             _storage = storage;
             _walletManager = walletManager;
+            _iCloud = iCloud;
         }
 
         public async Task InitSeedWords(string password)
@@ -52,7 +55,20 @@ namespace Chaincase.UI.ViewModels
             IsBusy = false;
         }
 
-        public async Task<string> SetAlphaToBetaSeedWords(string password)
+        public async Task UploadToiCloud(string password)
+        {
+            // ask for permission
+            // (check if password is correct)
+
+            // encrypt wallet file
+            var iKey = await _storage.GetOrGenerateIntermediateKey(password);
+            var encryptedWalletFile = Cryptor.EncryptFile(_walletManager.CurrentWallet.KeyManager.FilePath, iKey);
+
+            // move encrypted file to cloud
+            _iCloud.MoveToCloud(encryptedWalletFile, Path.GetFileName(encryptedWalletFile));
+        }
+
+        private async Task<string> SetAlphaToBetaSeedWords(string password)
         {
             try
             {

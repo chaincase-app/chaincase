@@ -57,12 +57,7 @@ namespace Chaincase
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
             _host = hostBuilder.Build();
-            var dataDir = ServiceProvider.GetRequiredService<IDataDirProvider>().Get();
-            Directory.CreateDirectory(dataDir);
-            var config = ServiceProvider.GetRequiredService<Config>();
-            config.LoadOrCreateDefaultFile();
-            var uiConfig = ServiceProvider.GetRequiredService<UiConfig>();
-            uiConfig.LoadOrCreateDefaultFile();
+
             MainPage = new ContentPage { Title = "Chaincase" };
             _host.AddComponent<Main>(parent: MainPage);
 

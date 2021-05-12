@@ -39,6 +39,23 @@ namespace Chaincase.Tests
             var plaintext = Cryptor.DecryptWithPassword(b64CipherText, password);
             Assert.True(plaintext == "poops");
         }
+
+        [Fact]
+        public async void CanEncryptAndDecryptFiles()
+		{
+            string text =
+            "A class is the most powerful data type in C#. Like a structure, " +
+            "a class defines the data and behavior of the data type. ";
+
+            await File.WriteAllTextAsync("WriteText.txt", text);
+
+            var key = Cryptor.NewKey();
+            Cryptor.EncryptFile("WriteText.txt", key);
+            Cryptor.DecryptFile("WriteText.txt.aes.hmac", key);
+
+            string decryptedText = await File.ReadAllTextAsync("WriteText.txt");
+            Assert.True(text == decryptedText);
+        }
     }
 
     class MockHsm : IHsmStorage

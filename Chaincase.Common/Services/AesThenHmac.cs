@@ -255,6 +255,181 @@ namespace Chaincase.Common.Services
 
         }
 
+        public static string EncryptFile(string inputFile, byte[] fatKey)
+        {
+            //User Error Checks
+            if (fatKey == null || fatKey.Length != FatKeyBitSize / 8)
+                throw new ArgumentException(String.Format("Key needs to be {0} bit!", FatKeyBitSize), "fatKey");
+
+            byte[] cryptKey = fatKey.Take(fatKey.Length / 2).ToArray();
+            byte[] authKey = fatKey.Skip(fatKey.Length / 2).ToArray();
+
+            byte[] iv;
+
+            using (var aes = new AesManaged
+            {
+                KeySize = KeyBitSize,
+                BlockSize = BlockBitSize,
+                Mode = CipherMode.CBC,
+                Padding = PaddingMode.PKCS7
+            })
+            {
+                //Use random IV
+                aes.GenerateIV();
+                iv = aes.IV;
+
+                using var encrypter = aes.CreateEncryptor(cryptKey, iv);
+                using var inputStream = new FileStream(inputFile, FileMode.Open);
+                using (var cipherStream = new FileStream(inputFile + ".aes", FileMode.Create))
+                {
+                    using (var aesStream = new CryptoStream(cipherStream, encrypter, CryptoStreamMode.Write))
+                    using (var binaryWriter = new BinaryWriter(aesStream))
+                    {
+                        byte[] buffer = new byte[1048576];
+                        int read;
+
+                        try
+                        {
+                            while ((read = inputStream.Read(buffer, 0, buffer.Length)) > 0)
+                            {
+                                binaryWriter.Write(buffer, 0, read);
+                            }
+                            cipherStream.Flush();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Error: " + ex.Message);
+                            return null;
+                        }
+                    }
+                }
+
+                using (var cipherStream = new FileStream(inputFile + ".aes", FileMode.Open))
+                {
+                    //Assemble encrypted message and add authentication
+                    using var hmac = new HMACSHA256(authKey);
+                    using var encryptedStream = new FileStream(inputFile + ".aes.hmac", FileMode.Create);
+                    using (var binaryWriter = new BinaryWriter(encryptedStream))
+                    {
+                        //Prepend IV
+                        binaryWriter.Write(iv);
+                        //Write Ciphertext
+                        byte[] buffer = new byte[1048576];
+                        int read;
+
+                        try
+                        {
+                            // TODO OPEN CIPHERSTREAM
+                            while ((read = cipherStream.Read(buffer, 0, buffer.Length)) > 0)
+                            {
+                                binaryWriter.Write(buffer, 0, read);
+                            }
+                            binaryWriter.Flush();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Error: " + ex.Message);
+                            return null;
+                        }
+
+                        //Authenticate all data
+                        var tag = hmac.ComputeHash(encryptedStream);
+                        //Postpend tag
+                        binaryWriter.Write(tag);
+                    }
+                }
+
+                return inputFile + ".aes.hmac";
+            }
+        }
+
+        public static string DecryptFile(string inputFile, byte[] fatKey)
+        {
+            //User Error Checks
+            if (!inputFile.EndsWith(".aes.hmac"))
+                throw new ArgumentException("Input File needs to have be a \".aes.hmac\"");
+
+            if (fatKey == null || fatKey.Length != FatKeyBitSize / 8)
+                throw new ArgumentException(String.Format("Key needs to be {0} bit!", FatKeyBitSize), "fatKey");
+
+            byte[] cryptKey = fatKey.Take(fatKey.Length / 2).ToArray();
+            byte[] authKey = fatKey.Skip(fatKey.Length / 2).ToArray();
+
+            using var inputStream = new FileStream(inputFile, FileMode.Open);
+
+            using (var hmac = new HMACSHA256(authKey))
+            {
+                var sentTag = new byte[hmac.HashSize / 8];
+                //Grab Sent Tag
+                inputStream.Position = inputStream.Length - sentTag.Length;
+                inputStream.Read(sentTag, 0, sentTag.Length);
+
+                //Calculate Tag
+                inputStream.Position = 0;
+                inputStream.SetLength(inputStream.Length - sentTag.Length);
+                using var encryptedStream = inputStream;
+                var calcTag = hmac.ComputeHash(encryptedStream);
+                var ivLength = (BlockBitSize / 8);
+
+                //if message length is to small just return null
+                if (encryptedStream.Length < sentTag.Length + ivLength)
+                    return null;
+
+                //Compare Tag with constant time comparison
+                var compare = 0;
+                for (var i = 0; i < sentTag.Length; i++)
+                    compare |= sentTag[i] ^ calcTag[i];
+
+                //if message doesn't authenticate return null
+                if (compare != 0)
+                    return null;
+
+                using (var aes = new AesManaged
+                {
+                    KeySize = KeyBitSize,
+                    BlockSize = BlockBitSize,
+                    Mode = CipherMode.CBC,
+                    Padding = PaddingMode.PKCS7
+                })
+                {
+                    int read;
+                    byte[] buffer = new byte[1048576];
+
+                    //Grab IV from message
+                    var iv = new byte[ivLength];
+                    read = encryptedStream.Read(iv, 0, ivLength);
+
+                    using (var decrypter = aes.CreateDecryptor(cryptKey, iv))
+                    using (var plainTextStream = new FileStream(inputFile.Remove(-".aes.hmac".Length), FileMode.Open))
+                    {
+                        using (var decrypterStream = new CryptoStream(plainTextStream, decrypter, CryptoStreamMode.Write))
+                        using (var binaryWriter = new BinaryWriter(decrypterStream))
+                        {
+                            //Decrypt Cipher Text from Message
+                            try
+                            {
+                                while ((read = encryptedStream.Read(buffer, 0, buffer.Length)) > 0)
+                                {
+                                    binaryWriter.Write(buffer, 0, read);
+                                }
+                                binaryWriter.Flush();
+                            }
+                            catch (CryptographicException ex_CryptographicException)
+                            {
+                                Console.WriteLine("CryptographicException error: " + ex_CryptographicException.Message);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine("Error: " + ex.Message);
+                            }
+                        }
+                        //Return Plain Text
+                        return inputFile.Remove(-".aes.hmac".Length);
+                    }
+                }
+            }
+        }
+
         public static byte[] Decrypt(byte[] encryptedMessage, byte[] cryptKey, byte[] authKey, int nonSecretPayloadLength = 0)
         {
 

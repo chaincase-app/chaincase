@@ -19,7 +19,11 @@
         </IonItem>
     </div>
     <IonButton class="neu-button" OnClick="@TryStartBackUp" expand="block" disabled="@ViewModel.HasNoSeedWords">
-        WRITE WORDS & BACK UP
+        Write Seed Words
+    </IonButton>
+
+    <IonButton class="neu-button" OnClick="@TryCloudSync" expand="block">
+        Sync with iCloud
     </IonButton>
     @if (ViewModel.HasNoSeedWords)
     {
@@ -59,6 +63,11 @@
         {
             IsShaking = true;
         }
+    }
+
+    private async Task TryCloudSync()
+    {
+        await ViewModel.UploadToiCloud(Password);
     }
 
     private void StackPush(string uri)
