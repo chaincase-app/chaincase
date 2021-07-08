@@ -58,8 +58,8 @@ namespace Chaincase.iOS
         {
 	        obj.AddSingleton<IHsmStorage, iOSHsmStorage>();
 	        obj.AddSingleton<INotificationManager, iOSNotificationManager>();
-	        obj.AddSingleton<iOSNotificationReceiver>();
 	        obj.AddSingleton<ITorManager, iOSTorManager>();
+	        obj.AddSingleton<iOSNotificationReceiver>();
         }
     }
 }

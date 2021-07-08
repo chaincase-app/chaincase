@@ -8,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Chaincase.UI.Services;
 using Chaincase.Common.Services.Mock;
 using Splat.Microsoft.Extensions.DependencyInjection;
-
+using Chaincase.Common;
 
 namespace Chaincase.SSB
 {
@@ -29,15 +29,21 @@ namespace Chaincase.SSB
 			services.AddDataProtection();
 			services.AddServerSideBlazor();
 			services.UseMicrosoftDependencyResolver();
+
+			services.AddCommonServices();
 			services.AddUIServices();
+
 			services.AddScoped<IClipboard, JSClipboard>();
-			services.AddTransient<IThemeManager, MockThemeManager>();
-			services.AddScoped<IHsmStorage, JsInteropSecureConfigProvider>();
-			services.AddScoped<IShare, SSBShare>();
 			services.AddSingleton<IDataDirProvider, SSBDataDirProvider>();
 			services.AddSingleton<IMainThreadInvoker, SSBMainThreadInvoker>();
-			services.AddSingleton<ITorManager, MockTorManager>();
+			services.AddScoped<IShare, SSBShare>();
+			services.AddSingleton<IThemeManager, MockThemeManager>();
+
+			// typically OS specific but web specific in SSB
+			services.AddScoped<IHsmStorage, JsInteropSecureConfigProvider>();
 			services.AddSingleton<INotificationManager, MockNotificationManager>();
+			services.AddSingleton<ITorManager, MockTorManager>();
+
 			services.AddBlazorDownloadFile();
 		}
 
